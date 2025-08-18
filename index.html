@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trái Tim 3D Đa Hiệu Ứng</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background: radial-gradient(ellipse at center, #1a0033 0%, #000 100%);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        canvas {
+            display: block;
+        }
+
+        #info {
+            position: absolute;
+            top: 20px;
+            width: 100%;
+            text-align: center;
+            z-index: 100;
+            color: white;
+            text-shadow: 0 0 10px #ff4da6, 0 0 20px #ff4da6, 0 0 30px #ff4da6;
+            font-size: 2.2em;
+            animation: text-flicker 3s infinite alternate;
+        }
+
+        #instruction {
+            position: absolute;
+            bottom: 20px;
+            width: 100%;
+            text-align: center;
+            z-index: 100;
+            color: #ccc;
+            font-size: 1em;
+        }
+
+        @keyframes text-flicker {
+            from {
+                opacity: 1;
+                text-shadow: 0 0 10px #ff4da6, 0 0 20px #ff4da6, 0 0 30px #ff4da6;
+            }
+
+            to {
+                opacity: 0.8;
+                text-shadow: 0 0 10px #ff4da6, 0 0 25px #ff4da6, 0 0 40px #ff4da6;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div id="instruction">Kéo để xoay, cuộn để zoom. Chạm vào trái tim để xem hiệu ứng đặc biệt!</div>
+
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+                "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+            }
+        }
+    </script>
+
+    <script type="module">
+        import * as THREE from 'three';
+        import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+        import { RGBELoader } from 'three/addons/loaders/RGBELoader.js';
+        import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
+        import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
+        import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
+        import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
+        import { FontLoader } from 'three/addons/loaders/FontLoader.js';
+        import { TextGeometry } from 'three/addons/geometries/TextGeometry.js';
+
+
+        // 1. KHỞI TẠO
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        camera.position.set(0, 2, 10);
+        let camAngle = 0;
+        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.toneMapping = THREE.ACESFilmicToneMapping;
+        renderer.toneMappingExposure = 1.2;
+        document.body.appendChild(renderer.domElement);
+        const controls = new OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true;
+        controls.minDistance = 4;
+        controls.maxDistance = 20;
+        controls.enablePan = false;
+
+        // 2. TẠO HÌNH DÁNG TRÁI TIM
+        const heartShape = new THREE.Shape();
+        const x = -2.5, y = -5;
+        heartShape.moveTo(x + 2.5, y + 2.5);
+        heartShape.bezierCurveTo(x + 2.5, y + 2.5, x + 2, y, x, y);
+        heartShape.bezierCurveTo(x - 3, y, x - 3, y + 3.5, x - 3, y + 3.5);
+        heartShape.bezierCurveTo(x - 3, y + 5.5, x - 1.5, y + 7.7, x + 2.5, y + 9.5);
+        heartShape.bezierCurveTo(x + 6, y + 7.7, x + 8, y + 5.5, x + 8, y + 3.5);
+        heartShape.bezierCurveTo(x + 8, y + 3.5, x + 8, y, x + 5, y);
+        heartShape.bezierCurveTo(x + 3.5, y, x + 2.5, y + 2.5, x + 2.5, y + 2.5);
+        const extrudeSettings = {
+            depth: 1,
+            bevelEnabled: true,
+            bevelSegments: 8,
+            steps: 2,
+            bevelSize: 0.4,
+            bevelThickness: 0.4
+        };
+        const geometry = new THREE.ExtrudeGeometry(heartShape, extrudeSettings);
+        geometry.center();
+
+        // 3. VẬT LIỆU GRADIENT ĐỘNG & PHẢN CHIẾU
+        const gradientTexture = new THREE.TextureLoader().load('https://i.imgur.com/8yKQFQp.png');
+        gradientTexture.wrapS = gradientTexture.wrapT = THREE.MirroredRepeatWrapping;
+        const material = new THREE.MeshPhysicalMaterial({
+            metalness: 0.5,
+            roughness: 0.1,
+            transmission: 0.8,
+            thickness: 1.8,
+            ior: 1.6,
+            reflectivity: 0.8,
+            color: 0xffffff,
+            emissive: 0xff4da6,
+            emissiveIntensity: 2,
+            map: gradientTexture,
+            envMapIntensity: 1.2,
+        });
+        const heart = new THREE.Mesh(geometry, material);
+        heart.scale.set(0.2, 0.2, 0.2);
+        heart.rotation.x = Math.PI;
+        heart.position.y = 1;
+        scene.add(heart);
+
+        // 4. MÔI TRƯỜNG PHẢN CHIẾU
+        const rgbeLoader = new RGBELoader();
+        rgbeLoader.load('https://unpkg.com/three@0.160.0/examples/textures/equirectangular/royal_esplanade_1k.hdr', (texture) => {
+            texture.mapping = THREE.EquirectangularReflectionMapping;
+            scene.background = texture;
+            scene.environment = texture;
+        });
+
+        // 5. BIỂU TƯỢNG BAY QUANH
+        const icons = [];
+        const fontLoader = new FontLoader();
+        fontLoader.load('https://unpkg.com/three@0.160.0/examples/fonts/helvetiker_regular.typeface.json', (font) => {
+            const textGeo = new TextGeometry('LOVE', { font, size: 0.25, height: 0.05 });
+            textGeo.center();
+            const textMat = new THREE.MeshBasicMaterial({ color: 0xff4da6 });
+            const textMesh = new THREE.Mesh(textGeo, textMat);
+            scene.add(textMesh);
+            icons.push(textMesh);
+        });
+
+        // 6. HẠT BỤI VÀ VOLUMETRIC LIGHT
+        let particleSystem;
+        const particleCount = 1200;
+        const particlesGeometry = new THREE.BufferGeometry();
+        const posArray = new Float32Array(particleCount * 3);
+        for (let i = 0; i < particleCount * 3; i++) {
+            posArray[i] = (Math.random() - 0.5) * 30;
+        }
+        particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+        const particleMaterial = new THREE.PointsMaterial({ size: 0.07, color: 0xff4da6, blending: THREE.AdditiveBlending, transparent: true, opacity: 0.7 });
+        particleSystem = new THREE.Points(particlesGeometry, particleMaterial);
+        scene.add(particleSystem);
+        // Đã xóa phần tạo và thêm cone (Volumetric light)
+        // const coneGeo = new THREE.ConeGeometry(1.2, 4, 32, 1, true);
+        // const coneMat = new THREE.MeshBasicMaterial({ color: 0xff4da6, transparent: true, opacity: 0.18, blending: THREE.AdditiveBlending, side: THREE.DoubleSide });
+        // const cone = new THREE.Mesh(coneGeo, coneMat);
+        // cone.position.set(0, 1, 0);
+        // cone.rotation.x = Math.PI;
+        // scene.add(cone);
+
+        // 7. HẬU KỲ BLOOM
+        const renderScene = new RenderPass(scene, camera);
+        const bloomPass = new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 1.5, 0.4, 0.85);
+        bloomPass.threshold = 0.1;
+        bloomPass.strength = 1.0;
+        bloomPass.radius = 1.0;
+        const outputPass = new OutputPass();
+        const composer = new EffectComposer(renderer);
+        composer.addPass(renderScene);
+        composer.addPass(bloomPass);
+        composer.addPass(outputPass);
+
+        // 8. HIỆU ỨNG VỠ TAN VÀ GHÉP LẠI
+        let shattered = false;
+        let originalPositions = null;
+        function shatterHeart() {
+            if (shattered) return;
+            shattered = true;
+            if (!originalPositions) {
+                originalPositions = geometry.attributes.position.array.slice();
+            }
+            const targetPositions = [];
+
+            for (let i = 0; i < geometry.attributes.position.count; i++) {
+                const px = originalPositions[i * 3 + 0];
+                const py = originalPositions[i * 3 + 1];
+                const pz = originalPositions[i * 3 + 2];
+
+                const dir = new THREE.Vector3(px, py, pz).normalize();
+                const strength = 2 + Math.random() * 2;
+
+                targetPositions.push(
+                    px + dir.x * strength,
+                    py + dir.y * strength,
+                    pz + dir.z * strength,
+                );
+            }
+
+            let progress = 0;
+            const shatterInterval = setInterval(() => {
+                progress += 0.05;
+                for (let i = 0; i < geometry.attributes.position.count; i++) {
+                    geometry.attributes.position.array[i * 3 + 0] = THREE.MathUtils.lerp(originalPositions[i * 3 + 0], targetPositions[i * 3 + 0], progress);
+                    geometry.attributes.position.array[i * 3 + 1] = THREE.MathUtils.lerp(originalPositions[i * 3 + 1], targetPositions[i * 3 + 1], progress);
+                    geometry.attributes.position.array[i * 3 + 2] = THREE.MathUtils.lerp(originalPositions[i * 3 + 2], targetPositions[i * 3 + 2], progress);
+                }
+                geometry.attributes.position.needsUpdate = true;
+                if (progress >= 1) clearInterval(shatterInterval);
+            }, 16);
+
+
+            setTimeout(() => {
+                let reassembleProgress = 0;
+                const reassembleInterval = setInterval(() => {
+                    reassembleProgress += 0.05;
+                    for (let i = 0; i < geometry.attributes.position.count; i++) {
+                        geometry.attributes.position.array[i * 3 + 0] = THREE.MathUtils.lerp(targetPositions[i * 3 + 0], originalPositions[i * 3 + 0], reassembleProgress);
+                        geometry.attributes.position.array[i * 3 + 1] = THREE.MathUtils.lerp(targetPositions[i * 3 + 1], originalPositions[i * 3 + 1], reassembleProgress);
+                        geometry.attributes.position.array[i * 3 + 2] = THREE.MathUtils.lerp(targetPositions[i * 3 + 2], originalPositions[i * 3 + 2], reassembleProgress);
+                    }
+                    geometry.attributes.position.needsUpdate = true;
+                    if (reassembleProgress >= 1) {
+                        clearInterval(reassembleInterval);
+                        shattered = false;
+                    }
+                }, 16);
+            }, 900);
+        }
+
+        // 9. PARTICLE BURST KHI CLICK
+        function burstParticles() {
+            for (let i = 0; i < 80; i++) {
+                const burstGeo = new THREE.SphereGeometry(0.03, 8, 8);
+                const burstMat = new THREE.MeshBasicMaterial({ color: 0xfff700 });
+                const burst = new THREE.Mesh(burstGeo, burstMat);
+                burst.position.copy(heart.position);
+                burst.userData = {
+                    velocity: new THREE.Vector3(
+                        (Math.random() - 0.5) * 6,
+                        (Math.random() - 0.5) * 6,
+                        (Math.random() - 0.5) * 6
+                    ),
+                    life: 0
+                };
+                scene.add(burst);
+                burstParticlesArr.push(burst);
+            }
+        }
+        const burstParticlesArr = [];
+
+        // 10. KÍNH LÚP KHI HOVER
+        let isHover = false;
+        const raycaster = new THREE.Raycaster();
+        renderer.domElement.addEventListener('pointermove', (e) => {
+            const mouse = new THREE.Vector2(
+                (e.clientX / window.innerWidth) * 2 - 1,
+                -(e.clientY / window.innerHeight) * 2 + 1
+            );
+            raycaster.setFromCamera(mouse, camera);
+            const intersects = raycaster.intersectObject(heart);
+            isHover = intersects.length > 0;
+        });
+
+        // 11. CAMERA CINEMATIC
+        let autoCam = true;
+        renderer.domElement.addEventListener('pointerdown', () => { autoCam = false; });
+        renderer.domElement.addEventListener('pointerup', () => {
+            setTimeout(() => autoCam = true, 5000);
+        });
+
+        // 12. ANIMATION
+        const clock = new THREE.Clock();
+        function animate() {
+            requestAnimationFrame(animate);
+            const elapsedTime = clock.getElapsedTime();
+            const delta = clock.getDelta();
+
+            // Camera cinematic
+            if (autoCam) {
+                camAngle += 0.003;
+                camera.position.x = Math.sin(camAngle) * 10;
+                camera.position.z = Math.cos(camAngle) * 10;
+                camera.lookAt(0, 1, 0);
+            }
+
+            // Trái tim xoay và chuyển màu gradient
+            heart.rotation.y = elapsedTime * 0.2;
+            gradientTexture.offset.x = Math.sin(elapsedTime * 0.5) * 0.2;
+            gradientTexture.offset.y = Math.cos(elapsedTime * 0.5) * 0.2;
+
+            // Nhịp đập
+            const pulse = Math.sin(elapsedTime * 2.5) * 0.05 + 1;
+            const targetScale = isHover ? 0.25 : 0.2;
+            heart.scale.x = THREE.MathUtils.lerp(heart.scale.x, targetScale * pulse, 0.1);
+            heart.scale.y = THREE.MathUtils.lerp(heart.scale.y, targetScale * pulse, 0.1);
+            heart.scale.z = THREE.MathUtils.lerp(heart.scale.z, targetScale * pulse, 0.1);
+
+            material.emissiveIntensity = (Math.sin(elapsedTime * 2.5) * 0.5 + 1.0) * 1.0;
+
+            // Biểu tượng bay quanh
+            icons.forEach((icon, i) => {
+                const angle = elapsedTime * 0.5 + i * (Math.PI * 2 / icons.length);
+                icon.position.x = Math.sin(angle) * 2.2;
+                icon.position.z = Math.cos(angle) * 2.2;
+                icon.position.y = 1 + Math.sin(angle * 2) * 0.5;
+                icon.lookAt(camera.position);
+            });
+
+            // Hạt bụi xoay
+            particleSystem.rotation.y = elapsedTime * 0.1;
+
+            // Đã xóa phần cập nhật opacity của cone
+            // cone.material.opacity = 0.18 + Math.abs(Math.sin(elapsedTime * 2.5)) * 0.12;
+
+            // Particle burst
+            for (let i = burstParticlesArr.length - 1; i >= 0; i--) {
+                const p = burstParticlesArr[i];
+                p.position.addScaledVector(p.userData.velocity, delta);
+                p.userData.life += delta;
+                p.material.opacity = Math.max(0, 1 - p.userData.life / 0.8);
+                if (p.userData.life > 0.8) {
+                    scene.remove(p);
+                    p.geometry.dispose();
+                    p.material.dispose();
+                    burstParticlesArr.splice(i, 1);
+                }
+            }
+
+            controls.update();
+            composer.render();
+        }
+        animate();
+
+        // 13. RESIZE
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            composer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        // 14. CLICK VÀO TRÁI TIM ĐỂ HIỆU ỨNG ĐẶC BIỆT
+        renderer.domElement.addEventListener('pointerdown', (e) => {
+            const mouse = new THREE.Vector2(
+                (e.clientX / window.innerWidth) * 2 - 1,
+                -(e.clientY / window.innerHeight) * 2 + 1
+            );
+            raycaster.setFromCamera(mouse, camera);
+            const intersects = raycaster.intersectObject(heart);
+            if (intersects.length > 0) {
+                burstParticles();
+                shatterHeart();
+            }
+        });
+    </script>
+</body>
+
+</html>
