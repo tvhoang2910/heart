@@ -2,373 +2,547 @@
 <html lang="vi">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Trái Tim 3D Đa Hiệu Ứng</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Timeline Sự Kiện</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet" />
     <style>
-        body {
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+
+        :root {
+            --primary-color: #4361ee;
+            --secondary-color: #3a0ca3;
+            --accent-color: #f72585;
+            --text-color: #2b2d42;
+            --light-text-color: #555;
+            --background-color: #f8f9fa;
+            --card-background: #ffffff;
+            --border-color: #e9ecef;
+            --shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            --transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        * {
             margin: 0;
-            overflow: hidden;
-            background: radial-gradient(ellipse at center, #1a0033 0%, #000 100%);
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding: 0;
+            box-sizing: border-box;
         }
 
-        canvas {
-            display: block;
+        body {
+            font-family: 'Poppins', 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #e0f7fa, #f3e5f5);
+            color: var(--text-color);
+            line-height: 1.7;
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
         }
 
-        #info {
-            position: absolute;
-            top: 20px;
+        /* Hiệu ứng nền nhẹ (particles) */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
             width: 100%;
-            text-align: center;
-            z-index: 100;
-            color: white;
-            text-shadow: 0 0 10px #ff4da6, 0 0 20px #ff4da6, 0 0 30px #ff4da6;
-            font-size: 2.2em;
-            animation: text-flicker 3s infinite alternate;
+            height: 100%;
+            background-image: radial-gradient(circle at 20% 30%, rgba(67, 97, 238, 0.05) 0%, transparent 25%),
+                radial-gradient(circle at 80% 70%, rgba(247, 37, 133, 0.05) 0%, transparent 25%);
+            pointer-events: none;
+            z-index: -1;
         }
 
-        #instruction {
+        h1 {
+            color: var(--primary-color);
+            text-align: center;
+            margin-bottom: 60px;
+            font-weight: 700;
+            font-size: 2.8em;
+            position: relative;
+            padding-bottom: 15px;
+            letter-spacing: -0.5px;
+        }
+
+        h1::after {
+            content: '';
             position: absolute;
-            bottom: 20px;
-            width: 100%;
-            text-align: center;
-            z-index: 100;
-            color: #ccc;
-            font-size: 1em;
+            left: 50%;
+            bottom: 0;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 5px;
+            background: linear-gradient(to right, var(--primary-color), var(--accent-color));
+            border-radius: 3px;
+            animation: pulse-glow 2s infinite alternate;
         }
 
-        @keyframes text-flicker {
-            from {
-                opacity: 1;
-                text-shadow: 0 0 10px #ff4da6, 0 0 20px #ff4da6, 0 0 30px #ff4da6;
+        @keyframes pulse-glow {
+            0% {
+                box-shadow: 0 0 10px rgba(67, 97, 238, 0.4);
             }
 
-            to {
-                opacity: 0.8;
-                text-shadow: 0 0 10px #ff4da6, 0 0 25px #ff4da6, 0 0 40px #ff4da6;
+            100% {
+                box-shadow: 0 0 20px rgba(247, 37, 133, 0.6);
+            }
+        }
+
+        .timeline-container {
+            width: 100%;
+            max-width: 900px;
+            margin: auto;
+            position: relative;
+            padding: 30px 0;
+        }
+
+        .timeline-container::before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            top: 0;
+            width: 3px;
+            height: 100%;
+            background: linear-gradient(to bottom, transparent, var(--primary-color), var(--accent-color), var(--primary-color), transparent);
+            transform: translateX(-50%);
+            border-radius: 2px;
+            z-index: 1;
+        }
+
+        .timeline-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 60px;
+            position: relative;
+            align-items: center;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: var(--transition);
+        }
+
+        .timeline-item.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .timeline-item:nth-child(even) {
+            flex-direction: row-reverse;
+        }
+
+        .timeline-item-date {
+            width: calc(50% - 60px);
+            text-align: right;
+            padding-right: 35px;
+            color: var(--primary-color);
+            font-weight: 600;
+            font-size: 1.3em;
+            letter-spacing: 0.5px;
+        }
+
+        .timeline-item:nth-child(even) .timeline-item-date {
+            text-align: left;
+            padding-left: 35px;
+            padding-right: 0;
+        }
+
+        .timeline-item-dot {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            width: 24px;
+            height: 24px;
+            background-color: var(--card-background);
+            border: 5px solid var(--primary-color);
+            border-radius: 50%;
+            z-index: 3;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: 0 0 0 6px rgba(67, 97, 238, 0.2);
+            animation: pulse-dot 2s infinite alternate;
+        }
+
+        .timeline-item-dot:hover {
+            transform: translate(-50%, -50%) scale(1.4);
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 10px rgba(247, 37, 133, 0.3);
+            animation: none;
+        }
+
+        @keyframes pulse-dot {
+            0% {
+                box-shadow: 0 0 0 6px rgba(67, 97, 238, 0.2);
+            }
+
+            100% {
+                box-shadow: 0 0 0 10px rgba(247, 37, 133, 0.3);
+            }
+        }
+
+        .timeline-item-content {
+            width: calc(50% - 60px);
+            background-color: var(--card-background);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            position: relative;
+            cursor: pointer;
+            border-left: 6px solid var(--primary-color);
+            transform: translateY(0);
+            z-index: 2;
+        }
+
+        .timeline-item-content:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.18);
+        }
+
+        .timeline-item:nth-child(even) .timeline-item-content {
+            border-left: none;
+            border-right: 6px solid var(--primary-color);
+        }
+
+        .timeline-item-content h3 {
+            margin-top: 0;
+            color: var(--secondary-color);
+            font-size: 1.6em;
+            font-weight: 600;
+            margin-bottom: 12px;
+            transition: color 0.3s;
+        }
+
+        .timeline-item-content p {
+            color: var(--light-text-color);
+            margin-bottom: 0;
+            font-size: 1.05em;
+        }
+
+        .timeline-item-content:hover h3 {
+            color: var(--accent-color);
+        }
+
+        /* Arrow styling */
+        .timeline-item-content::before {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 0;
+            border-style: solid;
+            top: 25px;
+            z-index: 2;
+        }
+
+        .timeline-item:nth-child(odd) .timeline-item-content::before {
+            border-width: 15px 15px 15px 0;
+            border-color: transparent var(--card-background) transparent transparent;
+            right: -15px;
+        }
+
+        .timeline-item:nth-child(even) .timeline-item-content::before {
+            border-width: 15px 0 15px 15px;
+            border-color: transparent transparent transparent var(--card-background);
+            left: -15px;
+        }
+
+        /* Highlight mốc hiện tại */
+        .timeline-item.current .timeline-item-dot {
+            background-color: var(--accent-color);
+            border-color: white;
+            box-shadow: 0 0 0 10px rgba(247, 37, 133, 0.5);
+            animation: pulse-accent 1.5s infinite alternate;
+            transform: translate(-50%, -50%) scale(1.2);
+        }
+
+        @keyframes pulse-accent {
+            0% {
+                box-shadow: 0 0 0 10px rgba(247, 37, 133, 0.3);
+            }
+
+            100% {
+                box-shadow: 0 0 0 15px rgba(247, 37, 133, 0.6);
+            }
+        }
+
+        .timeline-item.current .timeline-item-content {
+            background: linear-gradient(to right, #fff5f7, #f8f9ff);
+            border-left-color: var(--accent-color);
+            border-right-color: var(--accent-color);
+        }
+
+        .timeline-item.current .timeline-item-content h3 {
+            color: var(--accent-color);
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(8px);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .modal-content {
+            background: var(--card-background);
+            margin: auto;
+            padding: 40px;
+            border-radius: 16px;
+            width: 90%;
+            max-width: 600px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
+            position: relative;
+            transform: scale(0.9);
+            opacity: 0;
+            transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        .modal.active .modal-content {
+            transform: scale(1);
+            opacity: 1;
+        }
+
+        .modal-content h2 {
+            color: var(--secondary-color);
+            margin-top: 0;
+            font-size: 1.8em;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .modal-content p {
+            color: var(--light-text-color);
+            font-size: 1.1em;
+            line-height: 1.7;
+            margin-bottom: 15px;
+        }
+
+        .close-button {
+            color: #aaa;
+            position: absolute;
+            top: 15px;
+            right: 25px;
+            font-size: 36px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .close-button:hover,
+        .close-button:focus {
+            color: var(--accent-color);
+            transform: rotate(90deg);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.2em;
+            }
+
+            .timeline-container::before {
+                left: 30px;
+                transform: none;
+            }
+
+            .timeline-item {
+                flex-direction: column;
+                align-items: flex-start;
+                padding-left: 60px;
+            }
+
+            .timeline-item-date,
+            .timeline-item:nth-child(even) .timeline-item-date {
+                text-align: left;
+                padding: 0;
+                margin-bottom: 10px;
+                width: auto;
+            }
+
+            .timeline-item-dot {
+                left: 30px;
+                top: 30px;
+                transform: translateX(-50%);
+            }
+
+            .timeline-item-content,
+            .timeline-item:nth-child(even) .timeline-item-content {
+                width: 100%;
+                border-left: 6px solid var(--primary-color);
+                border-right: none;
+            }
+
+            .timeline-item-content::before,
+            .timeline-item:nth-child(even) .timeline-item-content::before {
+                display: none;
+            }
+
+            .modal-content {
+                width: 90%;
+                padding: 25px;
             }
         }
     </style>
 </head>
 
 <body>
-    <div id="instruction">Kéo để xoay, cuộn để zoom. Chạm vào trái tim để xem hiệu ứng đặc biệt!</div>
 
-    <script type="importmap">
-        {
-            "imports": {
-                "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
-                "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
-            }
-        }
-    </script>
+    <h1>Lịch Trình Sự Kiện Quan Trọng</h1>
 
-    <script type="module">
-        import * as THREE from 'three';
-        import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-        import { RGBELoader } from 'three/addons/loaders/RGBELoader.js';
-        import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
-        import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
-        import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
-        import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
-        import { FontLoader } from 'three/addons/loaders/FontLoader.js';
-        import { TextGeometry } from 'three/addons/geometries/TextGeometry.js';
+    <div class="timeline-container">
+        <!-- Event 1 -->
+        <div class="timeline-item" data-date="2024-08-26">
+            <div class="timeline-item-date">26/8, 20h</div>
+            <div class="timeline-item-dot" data-event-id="e1"></div>
+            <div class="timeline-item-content" data-event-id="e1">
+                <h3>Chọn Thời Gian Duyệt</h3>
+                <p>Quyết định và thống nhất thời điểm cụ thể để bắt đầu quá trình duyệt.</p>
+            </div>
+        </div>
 
+        <!-- Event 2 -->
+        <div class="timeline-item" data-date="2024-08-27">
+            <div class="timeline-item-date">27/8 - 6/9</div>
+            <div class="timeline-item-dot" data-event-id="e2"></div>
+            <div class="timeline-item-content" data-event-id="e2">
+                <h3>Duyệt Nội Dung</h3>
+                <p>Thực hiện việc kiểm tra, đánh giá và chỉnh sửa nội dung theo kế hoạch đã định.</p>
+            </div>
+        </div>
 
-        // 1. KHỞI TẠO
-        const scene = new THREE.Scene();
-        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-        camera.position.set(0, 2, 10);
-        let camAngle = 0;
-        const renderer = new THREE.WebGLRenderer({ antialias: true });
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        renderer.toneMapping = THREE.ACESFilmicToneMapping;
-        renderer.toneMappingExposure = 1.2;
-        document.body.appendChild(renderer.domElement);
-        const controls = new OrbitControls(camera, renderer.domElement);
-        controls.enableDamping = true;
-        controls.minDistance = 4;
-        controls.maxDistance = 20;
-        controls.enablePan = false;
+        <!-- Event 3 -->
+        <div class="timeline-item" data-date="2024-09-07">
+            <div class="timeline-item-date">7/9</div>
+            <div class="timeline-item-dot" data-event-id="e3"></div>
+            <div class="timeline-item-content" data-event-id="e3">
+                <h3>Công Tác Chuẩn Bị</h3>
+                <p>Hoàn tất các bước chuẩn bị cần thiết trước khi sự kiện chính diễn ra.</p>
+            </div>
+        </div>
 
-        // 2. TẠO HÌNH DÁNG TRÁI TIM
-        const heartShape = new THREE.Shape();
-        const x = -2.5, y = -5;
-        heartShape.moveTo(x + 2.5, y + 2.5);
-        heartShape.bezierCurveTo(x + 2.5, y + 2.5, x + 2, y, x, y);
-        heartShape.bezierCurveTo(x - 3, y, x - 3, y + 3.5, x - 3, y + 3.5);
-        heartShape.bezierCurveTo(x - 3, y + 5.5, x - 1.5, y + 7.7, x + 2.5, y + 9.5);
-        heartShape.bezierCurveTo(x + 6, y + 7.7, x + 8, y + 5.5, x + 8, y + 3.5);
-        heartShape.bezierCurveTo(x + 8, y + 3.5, x + 8, y, x + 5, y);
-        heartShape.bezierCurveTo(x + 3.5, y, x + 2.5, y + 2.5, x + 2.5, y + 2.5);
-        const extrudeSettings = {
-            depth: 1,
-            bevelEnabled: true,
-            bevelSegments: 8,
-            steps: 2,
-            bevelSize: 0.4,
-            bevelThickness: 0.4
-        };
-        const geometry = new THREE.ExtrudeGeometry(heartShape, extrudeSettings);
-        geometry.center();
+        <!-- Event 4 -->
+        <div class="timeline-item" data-date="2024-09-08">
+            <div class="timeline-item-date">8/9</div>
+            <div class="timeline-item-dot" data-event-id="e4"></div>
+            <div class="timeline-item-content" data-event-id="e4">
+                <h3>Sự Kiện Chính</h3>
+                <p>Ngày diễn ra sự kiện trọng đại và quan trọng nhất.</p>
+            </div>
+        </div>
+    </div>
 
-        // 3. VẬT LIỆU GRADIENT ĐỘNG & PHẢN CHIẾU
-        const gradientTexture = new THREE.TextureLoader().load('https://i.imgur.com/8yKQFQp.png');
-        gradientTexture.wrapS = gradientTexture.wrapT = THREE.MirroredRepeatWrapping;
-        const material = new THREE.MeshPhysicalMaterial({
-            metalness: 0.5,
-            roughness: 0.1,
-            transmission: 0.8,
-            thickness: 1.8,
-            ior: 1.6,
-            reflectivity: 0.8,
-            color: 0xffffff,
-            emissive: 0xff4da6,
-            emissiveIntensity: 2,
-            map: gradientTexture,
-            envMapIntensity: 1.2,
-        });
-        const heart = new THREE.Mesh(geometry, material);
-        heart.scale.set(0.2, 0.2, 0.2);
-        heart.rotation.x = Math.PI;
-        heart.position.y = 1;
-        scene.add(heart);
+    <!-- Modal -->
+    <div id="eventModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <h2 id="modalEventTitle">Tiêu đề sự kiện</h2>
+            <p id="modalEventDescription">Mô tả chi tiết về sự kiện sẽ hiển thị ở đây.</p>
+            <p><small id="modalEventDate" style="color: #888;">Ngày diễn ra: N/A</small></p>
+        </div>
+    </div>
 
-        // 4. MÔI TRƯỜNG PHẢN CHIẾU
-        const rgbeLoader = new RGBELoader();
-        rgbeLoader.load('https://unpkg.com/three@0.160.0/examples/textures/equirectangular/royal_esplanade_1k.hdr', (texture) => {
-            texture.mapping = THREE.EquirectangularReflectionMapping;
-            scene.background = texture;
-            scene.environment = texture;
-        });
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const modal = document.getElementById('eventModal');
+            const closeButton = document.querySelector('.close-button');
+            const modalTitle = document.getElementById('modalEventTitle');
+            const modalDescription = document.getElementById('modalEventDescription');
+            const modalDate = document.getElementById('modalEventDate');
 
-        // 5. BIỂU TƯỢNG BAY QUANH
-        const icons = [];
-        const fontLoader = new FontLoader();
-        fontLoader.load('https://unpkg.com/three@0.160.0/examples/fonts/helvetiker_regular.typeface.json', (font) => {
-            const textGeo = new TextGeometry('LOVE', { font, size: 0.25, height: 0.05 });
-            textGeo.center();
-            const textMat = new THREE.MeshBasicMaterial({ color: 0xff4da6 });
-            const textMesh = new THREE.Mesh(textGeo, textMat);
-            scene.add(textMesh);
-            icons.push(textMesh);
-        });
-
-        // 6. HẠT BỤI VÀ VOLUMETRIC LIGHT
-        let particleSystem;
-        const particleCount = 1200;
-        const particlesGeometry = new THREE.BufferGeometry();
-        const posArray = new Float32Array(particleCount * 3);
-        for (let i = 0; i < particleCount * 3; i++) {
-            posArray[i] = (Math.random() - 0.5) * 30;
-        }
-        particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
-        const particleMaterial = new THREE.PointsMaterial({ size: 0.07, color: 0xff4da6, blending: THREE.AdditiveBlending, transparent: true, opacity: 0.7 });
-        particleSystem = new THREE.Points(particlesGeometry, particleMaterial);
-        scene.add(particleSystem);
-        // Đã xóa phần tạo và thêm cone (Volumetric light)
-        // const coneGeo = new THREE.ConeGeometry(1.2, 4, 32, 1, true);
-        // const coneMat = new THREE.MeshBasicMaterial({ color: 0xff4da6, transparent: true, opacity: 0.18, blending: THREE.AdditiveBlending, side: THREE.DoubleSide });
-        // const cone = new THREE.Mesh(coneGeo, coneMat);
-        // cone.position.set(0, 1, 0);
-        // cone.rotation.x = Math.PI;
-        // scene.add(cone);
-
-        // 7. HẬU KỲ BLOOM
-        const renderScene = new RenderPass(scene, camera);
-        const bloomPass = new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 1.5, 0.4, 0.85);
-        bloomPass.threshold = 0.1;
-        bloomPass.strength = 1.0;
-        bloomPass.radius = 1.0;
-        const outputPass = new OutputPass();
-        const composer = new EffectComposer(renderer);
-        composer.addPass(renderScene);
-        composer.addPass(bloomPass);
-        composer.addPass(outputPass);
-
-        // 8. HIỆU ỨNG VỠ TAN VÀ GHÉP LẠI
-        let shattered = false;
-        let originalPositions = null;
-        function shatterHeart() {
-            if (shattered) return;
-            shattered = true;
-            if (!originalPositions) {
-                originalPositions = geometry.attributes.position.array.slice();
-            }
-            const targetPositions = [];
-
-            for (let i = 0; i < geometry.attributes.position.count; i++) {
-                const px = originalPositions[i * 3 + 0];
-                const py = originalPositions[i * 3 + 1];
-                const pz = originalPositions[i * 3 + 2];
-
-                const dir = new THREE.Vector3(px, py, pz).normalize();
-                const strength = 2 + Math.random() * 2;
-
-                targetPositions.push(
-                    px + dir.x * strength,
-                    py + dir.y * strength,
-                    pz + dir.z * strength,
-                );
-            }
-
-            let progress = 0;
-            const shatterInterval = setInterval(() => {
-                progress += 0.05;
-                for (let i = 0; i < geometry.attributes.position.count; i++) {
-                    geometry.attributes.position.array[i * 3 + 0] = THREE.MathUtils.lerp(originalPositions[i * 3 + 0], targetPositions[i * 3 + 0], progress);
-                    geometry.attributes.position.array[i * 3 + 1] = THREE.MathUtils.lerp(originalPositions[i * 3 + 1], targetPositions[i * 3 + 1], progress);
-                    geometry.attributes.position.array[i * 3 + 2] = THREE.MathUtils.lerp(originalPositions[i * 3 + 2], targetPositions[i * 3 + 2], progress);
+            const eventData = {
+                e1: {
+                    title: "Chọn Thời Gian Duyệt",
+                    description: "Đây là giai đoạn khởi đầu, nơi các bên liên quan sẽ ngồi lại để thống nhất một thời điểm phù hợp nhất để bắt đầu quá trình duyệt nội dung. Việc lựa chọn thời điểm tối ưu sẽ đảm bảo hiệu quả và sự tham gia đầy đủ.",
+                    date: "20h ngày 26/8"
+                },
+                e2: {
+                    title: "Duyệt Nội Dung",
+                    description: "Trong khoảng thời gian này, toàn bộ nội dung sẽ được kiểm tra kỹ lưỡng, đánh giá chất lượng, độ chính xác, và sự phù hợp với các tiêu chuẩn đã đặt ra. Các chỉnh sửa và góp ý sẽ được thực hiện để hoàn thiện nội dung.",
+                    date: "27/8 - 6/9"
+                },
+                e3: {
+                    title: "Công Tác Chuẩn Bị Trước Sự Kiện Chính",
+                    description: "Ngày này dành riêng cho việc chuẩn bị cuối cùng: kiểm tra lại cơ sở vật chất, thiết bị, sắp xếp nhân sự, và hoàn tất mọi hạng mục nhỏ nhất để đảm bảo sự kiện chính diễn ra suôn sẻ và thành công mỹ mãn.",
+                    date: "7/9"
+                },
+                e4: {
+                    title: "Sự Kiện Chính",
+                    description: "Đây là ngày đỉnh điểm của toàn bộ quá trình, nơi mọi nỗ lực chuẩn bị được hiện thực hóa. Sự kiện sẽ diễn ra theo đúng kế hoạch, mang đến những trải nghiệm và kết quả mong đợi.",
+                    date: "8/9"
                 }
-                geometry.attributes.position.needsUpdate = true;
-                if (progress >= 1) clearInterval(shatterInterval);
-            }, 16);
+            };
 
+            // Mở modal
+            document.querySelectorAll('.timeline-item-dot, .timeline-item-content').forEach(item => {
+                item.addEventListener('click', function () {
+                    const eventId = this.dataset.eventId;
+                    const data = eventData[eventId];
 
-            setTimeout(() => {
-                let reassembleProgress = 0;
-                const reassembleInterval = setInterval(() => {
-                    reassembleProgress += 0.05;
-                    for (let i = 0; i < geometry.attributes.position.count; i++) {
-                        geometry.attributes.position.array[i * 3 + 0] = THREE.MathUtils.lerp(targetPositions[i * 3 + 0], originalPositions[i * 3 + 0], reassembleProgress);
-                        geometry.attributes.position.array[i * 3 + 1] = THREE.MathUtils.lerp(targetPositions[i * 3 + 1], originalPositions[i * 3 + 1], reassembleProgress);
-                        geometry.attributes.position.array[i * 3 + 2] = THREE.MathUtils.lerp(targetPositions[i * 3 + 2], originalPositions[i * 3 + 2], reassembleProgress);
+                    if (data) {
+                        modalTitle.textContent = data.title;
+                        modalDescription.textContent = data.description;
+                        modalDate.textContent = `Ngày diễn ra: ${data.date}`;
+                        modal.classList.add('active');
                     }
-                    geometry.attributes.position.needsUpdate = true;
-                    if (reassembleProgress >= 1) {
-                        clearInterval(reassembleInterval);
-                        shattered = false;
-                    }
-                }, 16);
-            }, 900);
-        }
-
-        // 9. PARTICLE BURST KHI CLICK
-        function burstParticles() {
-            for (let i = 0; i < 80; i++) {
-                const burstGeo = new THREE.SphereGeometry(0.03, 8, 8);
-                const burstMat = new THREE.MeshBasicMaterial({ color: 0xfff700 });
-                const burst = new THREE.Mesh(burstGeo, burstMat);
-                burst.position.copy(heart.position);
-                burst.userData = {
-                    velocity: new THREE.Vector3(
-                        (Math.random() - 0.5) * 6,
-                        (Math.random() - 0.5) * 6,
-                        (Math.random() - 0.5) * 6
-                    ),
-                    life: 0
-                };
-                scene.add(burst);
-                burstParticlesArr.push(burst);
-            }
-        }
-        const burstParticlesArr = [];
-
-        // 10. KÍNH LÚP KHI HOVER
-        let isHover = false;
-        const raycaster = new THREE.Raycaster();
-        renderer.domElement.addEventListener('pointermove', (e) => {
-            const mouse = new THREE.Vector2(
-                (e.clientX / window.innerWidth) * 2 - 1,
-                -(e.clientY / window.innerHeight) * 2 + 1
-            );
-            raycaster.setFromCamera(mouse, camera);
-            const intersects = raycaster.intersectObject(heart);
-            isHover = intersects.length > 0;
-        });
-
-        // 11. CAMERA CINEMATIC
-        let autoCam = true;
-        renderer.domElement.addEventListener('pointerdown', () => { autoCam = false; });
-        renderer.domElement.addEventListener('pointerup', () => {
-            setTimeout(() => autoCam = true, 5000);
-        });
-
-        // 12. ANIMATION
-        const clock = new THREE.Clock();
-        function animate() {
-            requestAnimationFrame(animate);
-            const elapsedTime = clock.getElapsedTime();
-            const delta = clock.getDelta();
-
-            // Camera cinematic
-            if (autoCam) {
-                camAngle += 0.003;
-                camera.position.x = Math.sin(camAngle) * 10;
-                camera.position.z = Math.cos(camAngle) * 10;
-                camera.lookAt(0, 1, 0);
-            }
-
-            // Trái tim xoay và chuyển màu gradient
-            heart.rotation.y = elapsedTime * 0.2;
-            gradientTexture.offset.x = Math.sin(elapsedTime * 0.5) * 0.2;
-            gradientTexture.offset.y = Math.cos(elapsedTime * 0.5) * 0.2;
-
-            // Nhịp đập
-            const pulse = Math.sin(elapsedTime * 2.5) * 0.05 + 1;
-            const targetScale = isHover ? 0.25 : 0.2;
-            heart.scale.x = THREE.MathUtils.lerp(heart.scale.x, targetScale * pulse, 0.1);
-            heart.scale.y = THREE.MathUtils.lerp(heart.scale.y, targetScale * pulse, 0.1);
-            heart.scale.z = THREE.MathUtils.lerp(heart.scale.z, targetScale * pulse, 0.1);
-
-            material.emissiveIntensity = (Math.sin(elapsedTime * 2.5) * 0.5 + 1.0) * 1.0;
-
-            // Biểu tượng bay quanh
-            icons.forEach((icon, i) => {
-                const angle = elapsedTime * 0.5 + i * (Math.PI * 2 / icons.length);
-                icon.position.x = Math.sin(angle) * 2.2;
-                icon.position.z = Math.cos(angle) * 2.2;
-                icon.position.y = 1 + Math.sin(angle * 2) * 0.5;
-                icon.lookAt(camera.position);
+                });
             });
 
-            // Hạt bụi xoay
-            particleSystem.rotation.y = elapsedTime * 0.1;
+            // Đóng modal
+            closeButton.addEventListener('click', () => {
+                modal.classList.remove('active');
+            });
 
-            // Đã xóa phần cập nhật opacity của cone
-            // cone.material.opacity = 0.18 + Math.abs(Math.sin(elapsedTime * 2.5)) * 0.12;
-
-            // Particle burst
-            for (let i = burstParticlesArr.length - 1; i >= 0; i--) {
-                const p = burstParticlesArr[i];
-                p.position.addScaledVector(p.userData.velocity, delta);
-                p.userData.life += delta;
-                p.material.opacity = Math.max(0, 1 - p.userData.life / 0.8);
-                if (p.userData.life > 0.8) {
-                    scene.remove(p);
-                    p.geometry.dispose();
-                    p.material.dispose();
-                    burstParticlesArr.splice(i, 1);
+            window.addEventListener('click', (event) => {
+                if (event.target === modal) {
+                    modal.classList.remove('active');
                 }
+            });
+
+            // Tự động highlight mốc hiện tại (ngày 8/9)
+            const today = new Date();
+            const items = document.querySelectorAll('.timeline-item');
+            let closestItem = null;
+            let minDiff = Infinity;
+
+            items.forEach(item => {
+                const dateStr = item.dataset.date;
+                const eventDate = new Date(dateStr);
+                const diff = Math.abs(today - eventDate);
+
+                if (diff < minDiff) {
+                    minDiff = diff;
+                    closestItem = item;
+                }
+            });
+
+            if (closestItem) {
+                closestItem.classList.add('current');
             }
 
-            controls.update();
-            composer.render();
-        }
-        animate();
+            // Hiệu ứng xuất hiện khi cuộn
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                    }
+                });
+            }, { threshold: 0.1 });
 
-        // 13. RESIZE
-        window.addEventListener('resize', () => {
-            camera.aspect = window.innerWidth / window.innerHeight;
-            camera.updateProjectionMatrix();
-            renderer.setSize(window.innerWidth, window.innerHeight);
-            composer.setSize(window.innerWidth, window.innerHeight);
-        });
-
-        // 14. CLICK VÀO TRÁI TIM ĐỂ HIỆU ỨNG ĐẶC BIỆT
-        renderer.domElement.addEventListener('pointerdown', (e) => {
-            const mouse = new THREE.Vector2(
-                (e.clientX / window.innerWidth) * 2 - 1,
-                -(e.clientY / window.innerHeight) * 2 + 1
-            );
-            raycaster.setFromCamera(mouse, camera);
-            const intersects = raycaster.intersectObject(heart);
-            if (intersects.length > 0) {
-                burstParticles();
-                shatterHeart();
-            }
+            document.querySelectorAll('.timeline-item').forEach(item => {
+                observer.observe(item);
+            });
         });
     </script>
 </body>
