@@ -1,667 +1,1063 @@
+<!-- https://www.google.com/maps/place/C%C3%B4+Thanh+B%C3%BAn+Ri%C3%AAu+B%E1%BB%81+B%E1%BB%81+-+B%C3%A1nh+%C4%90a+C%C3%A1/@21.0599869,105.7796589,17z/data=!3m1!4b1!4m6!3m5!1s0x3135ab2aab9dce1b:0x69ce40322fa54915!8m2!3d21.0599869!4d105.7822338!16s%2Fg%2F11q_49hvfv?hl=vi&entry=ttu%26g_ep%3DEgoyMDI1MDgxOS4wIKXMDSoASAFQAw%3D%3D -->
 <!DOCTYPE html>
 <html lang="vi">
 
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Timeline Sự Kiện - Phiên Bản Ultimate</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bạn Có Một Lá Thư!</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Quicksand:wght@400;500;600&display=swap"
+        rel="stylesheet">
+
+    <!-- Font Awesome (for icons) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+        integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+
     <style>
         :root {
-            --primary-color: #4361ee;
-            --secondary-color: #3a0ca3;
-            --accent-color: #f72585;
-            --glow-color-primary: rgba(67, 97, 238, 0.75);
-            --glow-color-accent: rgba(247, 37, 133, 0.8);
-            --text-color: #e0e0e0;
-            /* Chuyển sang text sáng để nổi trên nền tối */
-            --light-text-color: #a0a0c0;
-            --card-background: rgba(20, 20, 40, 0.65);
-            /* Nền tối cho card */
-            --border-color: rgba(255, 255, 255, 0.15);
-            --shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-            --transition-smooth: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+            --primary-color: #c86b85;
+            --secondary-color: #e6a4b4;
+            --bg-color-start: #f8cdda;
+            --bg-color-end: #937dc2;
+            --text-dark: #333;
+            --text-light: #666;
+            --font-cursive: 'Dancing Script', cursive;
+            --font-sans: 'Quicksand', sans-serif;
+            --envelope-color: #f7f3f3;
+            --envelope-inside-color: #fff1f1;
         }
 
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            cursor: none;
-            /* Ẩn con trỏ mặc định */
-        }
-
-        /* --- CURSOR TÙY CHỈNH --- */
-        .custom-cursor {
-            position: fixed;
-            width: 25px;
-            height: 25px;
-            border: 2px solid var(--accent-color);
-            border-radius: 50%;
-            left: 0;
-            top: 0;
-            pointer-events: none;
-            transform: translate(-50%, -50%);
-            z-index: 9999;
-            transition: width 0.2s, height 0.2s, background-color 0.2s;
-        }
-
-        .custom-cursor.pointer {
-            width: 40px;
-            height: 40px;
-            background-color: rgba(247, 37, 133, 0.2);
         }
 
         body {
-            font-family: 'Poppins', sans-serif;
-            color: var(--text-color);
-            line-height: 1.7;
-            min-height: 100vh;
-            overflow-x: hidden;
-            position: relative;
-            background: #0f0c29;
-            background: -webkit-linear-gradient(to right, #24243e, #302b63, #0f0c29);
-            background: linear-gradient(to right, #24243e, #302b63, #0f0c29);
-        }
-
-        /* --- THANH CUỘN TÙY CHỈNH --- */
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: #1a1a2e;
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: linear-gradient(var(--primary-color), var(--accent-color));
-            border-radius: 4px;
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: linear-gradient(var(--accent-color), var(--primary-color));
-        }
-
-        h1 {
-            text-align: center;
-            margin-top: 60px;
-            margin-bottom: 80px;
-            font-weight: 700;
-            font-size: 3.5em;
-            position: relative;
-            padding-bottom: 20px;
-            letter-spacing: -1px;
-            color: #fff;
-            text-shadow: 0 0 10px var(--glow-color-primary), 0 0 20px var(--glow-color-accent);
-        }
-
-        h1::after {
-            content: '';
-            position: absolute;
-            left: 50%;
-            bottom: 0;
-            transform: translateX(-50%);
-            width: 120px;
-            height: 5px;
-            background: linear-gradient(to right, var(--primary-color), var(--accent-color));
-            border-radius: 3px;
-            animation: pulse-glow 2.5s infinite alternate;
-        }
-
-        @keyframes pulse-glow {
-            from {
-                box-shadow: 0 0 15px var(--glow-color-primary);
-            }
-
-            to {
-                box-shadow: 0 0 25px var(--glow-color-accent);
-            }
-        }
-
-        .timeline-container {
-            width: 100%;
-            max-width: 900px;
-            margin: auto;
-            position: relative;
-            padding: 30px 0;
-            perspective: 1000px;
-            /* Thêm perspective cho hiệu ứng 3D */
-        }
-
-        .timeline-container::before {
-            /* Đường kẻ chính (nền) */
-            content: '';
-            position: absolute;
-            left: 50%;
-            top: 0;
-            width: 4px;
-            height: 100%;
-            background: rgba(255, 255, 255, 0.1);
-            transform: translateX(-50%);
-            border-radius: 2px;
-            z-index: 1;
-        }
-
-        /* Đường kẻ tiến trình */
-        .timeline-progress {
-            position: absolute;
-            left: 50%;
-            top: 0;
-            width: 4px;
-            height: var(--scroll-progress, 0%);
-            background: linear-gradient(to bottom, var(--primary-color), var(--accent-color));
-            transform: translateX(-50%);
-            border-radius: 2px;
-            z-index: 2;
-            filter: drop-shadow(0 0 8px var(--glow-color-accent));
-            transition: height 0.1s ease-out;
-        }
-
-
-        .timeline-item {
+            font-family: var(--font-sans);
             display: flex;
-            justify-content: space-between;
-            margin-bottom: 80px;
-            position: relative;
+            justify-content: center;
             align-items: center;
-            opacity: 0;
-            transform: rotateX(-30deg) translateY(100px);
-            transition: opacity 0.8s ease-out, transform 0.8s cubic-bezier(0.165, 0.84, 0.44, 1);
+            min-height: 100vh;
+            background: linear-gradient(-45deg, var(--bg-color-start), var(--secondary-color), var(--bg-color-end));
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            overflow: hidden;
+            perspective: 1500px;
+            /* Tăng perspective cho hiệu ứng 3D đẹp hơn */
         }
 
-        .timeline-item.visible {
-            opacity: 1;
-            transform: rotateX(0) translateY(0);
-        }
-
-        .timeline-item:nth-child(even) {
-            flex-direction: row-reverse;
-        }
-
-        .timeline-item-date {
-            width: calc(50% - 60px);
-            text-align: right;
-            padding-right: 35px;
-            color: #fff;
-            font-weight: 600;
-            font-size: 1.4em;
-            text-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
-        }
-
-        .timeline-item:nth-child(even) .timeline-item-date {
-            text-align: left;
-            padding-left: 35px;
-            padding-right: 0;
-        }
-
-        .timeline-item-dot {
-            position: absolute;
-            left: 50%;
-            top: 50%;
-            transform: translate(-50%, -50%);
-            width: 26px;
-            height: 26px;
-            background-color: #0f0c29;
-            border: 5px solid var(--primary-color);
-            border-radius: 50%;
-            z-index: 4;
-            transition: var(--transition-smooth);
-            box-shadow: 0 0 15px var(--glow-color-primary);
-        }
-
-        /* Hiệu ứng sóng âm */
-        .timeline-item-dot::after {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 100%;
-            height: 100%;
-            background: var(--primary-color);
-            border-radius: 50%;
-            transform: translate(-50%, -50%);
-            z-index: -1;
-            animation: sonar-pulse 2s infinite ease-out;
-        }
-
-        @keyframes sonar-pulse {
+        @keyframes gradientBG {
             0% {
-                transform: translate(-50%, -50%) scale(0.5);
-                opacity: 0.6;
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
             }
 
             100% {
-                transform: translate(-50%, -50%) scale(3);
+                background-position: 0% 50%;
+            }
+        }
+
+        /* ----- Màn hình giới thiệu ban đầu NÂNG CẤP ----- */
+        .intro-screen {
+            text-align: center;
+            transition: opacity 0.8s 1s ease-out, transform 0.8s 1s ease-out;
+            z-index: 10;
+            transform-style: preserve-3d;
+            /* Cần thiết cho hiệu ứng 3D của con */
+        }
+
+        .intro-screen h2 {
+            color: white;
+            font-size: 2.2rem;
+            margin-bottom: 35px;
+            text-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            animation: fadeInDown 1s ease-out, vibrateText 3s ease-in-out infinite 1s;
+            font-weight: 700;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-40px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes vibrateText {
+
+            0%,
+            100% {
+                transform: translateY(0) rotate(0deg);
+            }
+
+            25% {
+                transform: translateY(-2px) rotate(-0.5deg);
+            }
+
+            50% {
+                transform: translateY(0) rotate(0.5deg);
+            }
+
+            75% {
+                transform: translateY(2px) rotate(-0.5deg);
+            }
+        }
+
+        /* ----- Thiết kế bì thư NÂNG CẤP TOÀN DIỆN ----- */
+        .envelope-wrapper {
+            position: relative;
+            cursor: pointer;
+            animation: float 3s ease-in-out infinite;
+            padding: 20px;
+            border-radius: 15px;
+            transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            transform-style: preserve-3d;
+        }
+
+        /* Hiệu ứng glow nhẹ phía sau phong bì (Cải tiến) */
+        .envelope-wrapper::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            /* Thay màu glow để hợp tông */
+            background: radial-gradient(circle at center, rgba(230, 164, 180, 0.25) 0%, transparent 70%);
+            border-radius: 50%;
+            filter: blur(25px);
+            opacity: 0;
+            transition: opacity 0.5s ease-out;
+            z-index: -1;
+        }
+
+        .envelope-wrapper:hover::before {
+            opacity: 1;
+            animation: pulseGlow 2.5s infinite alternate;
+            /* Glow nhấp nháy mượt hơn */
+        }
+
+        @keyframes pulseGlow {
+            from {
+                filter: blur(25px);
+                opacity: 0.8;
+                transform: scale(1.05);
+            }
+
+            to {
+                filter: blur(35px);
+                opacity: 1;
+                transform: scale(1.15);
+            }
+        }
+
+        /* HIỆU ỨNG HOVER 3D CÂN BẰNG (THAY ĐỔI CHÍNH) */
+        .envelope-wrapper:hover {
+            transform: translateY(-20px) scale(1.05) rotateX(15deg);
+            /* Hiệu ứng 3D nghiêng về phía trước */
+            box-shadow: 0 35px 60px -15px rgba(0, 0, 0, 0.4);
+            /* Bóng đổ chân thực hơn */
+        }
+
+        /* Lời nhắc tương tác (MỚI) */
+        .click-prompt {
+            margin-top: 25px;
+            color: rgba(255, 255, 255, 0.9);
+            font-weight: 500;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            font-style: italic;
+            animation: fadeInPrompt 1s ease-out 1.5s forwards, pulseText 2.5s infinite ease-in-out 2.5s;
+        }
+
+        @keyframes fadeInPrompt {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes pulseText {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.7;
+            }
+        }
+
+
+        .envelope {
+            position: relative;
+            width: 320px;
+            height: 200px;
+            background-color: var(--envelope-color);
+            border-radius: 10px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.25);
+            transition: transform 0.6s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+            transform-style: preserve-3d;
+        }
+
+        .envelope::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: var(--envelope-inside-color);
+            border-radius: 10px;
+        }
+
+        .envelope-flap {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100px;
+            background-image: linear-gradient(to bottom, #f8cdda, #f0e1e1);
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+            border-bottom: 100px solid transparent;
+            border-left: 160px solid transparent;
+            border-right: 160px solid transparent;
+            transform-origin: top;
+            transition: transform 0.7s 0.1s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .envelope-seal {
+            position: absolute;
+            top: 85px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 45px;
+            height: 45px;
+            background: var(--primary-color);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-size: 1.4rem;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3);
+            z-index: 5;
+            transition: opacity 0.3s ease-out, transform 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+        }
+
+        .envelope-seal::before,
+        .envelope-seal::after {
+            content: '';
+            position: absolute;
+            width: 45px;
+            height: 45px;
+            background: var(--primary-color);
+            border-radius: 50%;
+        }
+
+        .envelope-seal::before {
+            transform: translateX(-22.5px);
+        }
+
+        .envelope-seal::after {
+            transform: translateY(-22.5px);
+        }
+
+        .fa-heart {
+            z-index: 1;
+        }
+
+        .letter {
+            position: absolute;
+            top: 0;
+            left: 5%;
+            width: 90%;
+            height: 95%;
+            background: #fff;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1) inset;
+            z-index: -1;
+            transition: transform 0.7s 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0) rotate(0deg);
+            }
+
+            50% {
+                transform: translateY(-15px) rotate(1deg);
+            }
+        }
+
+        /* --- Hiệu ứng mở thư --- */
+        .envelope-wrapper.opening .envelope-flap {
+            transform: rotateX(180deg);
+        }
+
+        .envelope-wrapper.opening .envelope-seal {
+            opacity: 0;
+            transform: translateX(-50%) scale(1.5) translateY(-50px);
+        }
+
+        .envelope-wrapper.opening .letter {
+            transform: translateY(-110px);
+        }
+
+        .envelope-wrapper.opening .envelope {
+            transform: translateY(140px) rotateX(20deg);
+        }
+
+
+        /* ----- Thiệp mời ----- */
+        .invitation-card {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 95%;
+            max-width: 780px;
+            max-height: 90vh;
+            background: #fff;
+            border-radius: 25px;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.4);
+            padding: 50px;
+            text-align: center;
+            opacity: 0;
+            transform: translate(-50%, -50%) scale(0.5) rotateY(90deg);
+            pointer-events: none;
+            transition: all 1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            overflow-y: auto;
+            z-index: 20;
+            border: 1px solid #f0f0f0;
+        }
+
+        .invitation-card .close-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 1.8rem;
+            color: #b0b0b0;
+            cursor: pointer;
+            transition: color 0.3s, transform 0.3s;
+            z-index: 1;
+        }
+
+        .invitation-card .close-btn:hover {
+            color: var(--primary-color);
+            transform: rotate(180deg) scale(1.1);
+        }
+
+        /* ---- Nội dung bên trong thiệp ---- */
+        .card-content {
+            position: relative;
+            padding: 30px;
+            border: 3px dashed var(--secondary-color);
+            border-radius: 20px;
+            background: #fff;
+            box-shadow: 0 0 40px rgba(230, 164, 180, 0.15) inset;
+        }
+
+        .card-content>* {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+        }
+
+        .card-content h1 {
+            font-family: var(--font-cursive);
+            font-size: 3.8rem;
+            color: var(--primary-color);
+            margin-bottom: 15px;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-content .greeting {
+            font-family: var(--font-cursive);
+            font-size: 2.2rem;
+            color: var(--text-dark);
+            margin-bottom: 30px;
+        }
+
+        .card-content p {
+            font-size: 1.2rem;
+            line-height: 1.8;
+            color: var(--text-light);
+            margin-bottom: 35px;
+            font-weight: 500;
+        }
+
+        .details-box {
+            background-color: #fdf6f8;
+            border-left: 6px solid var(--secondary-color);
+            padding: 30px;
+            margin-bottom: 40px;
+            text-align: left;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .details-box ul {
+            list-style: none;
+        }
+
+        .details-box li {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 20px;
+            font-size: 1.2rem;
+            color: var(--text-dark);
+            font-weight: 600;
+        }
+
+        .details-box li:last-child {
+            margin-bottom: 0;
+        }
+
+        .details-box .fa-solid {
+            color: var(--primary-color);
+            font-size: 1.4rem;
+            width: 40px;
+            text-align: center;
+            margin-right: 20px;
+            flex-shrink: 0;
+            padding-top: 3px;
+        }
+
+        .special-message-box {
+            background-color: #ffeef2;
+            border: 2px solid var(--secondary-color);
+            border-radius: 18px;
+            padding: 30px;
+            margin-bottom: 40px;
+            box-shadow: 0 7px 20px rgba(230, 164, 180, 0.3);
+            transition: transform 0.4s ease-out, box-shadow 0.4s ease-out;
+        }
+
+        .special-message-box:hover {
+            transform: translateY(-5px) scale(1.01);
+            box-shadow: 0 10px 25px rgba(230, 164, 180, 0.4);
+        }
+
+        .special-message-box p {
+            margin-bottom: 20px;
+            color: var(--text-dark);
+            font-size: 1.2rem;
+        }
+
+        .contact-link {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--primary-color);
+            color: #fff;
+            padding: 12px 25px;
+            border-radius: 35px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin-top: 15px;
+            transition: background 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+        }
+
+        .contact-link i {
+            margin-right: 8px;
+            font-size: 1.2em;
+        }
+
+        .contact-link:hover {
+            background: #e6a4b4;
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
+        }
+
+        .special-message-box p:last-child {
+            margin-top: 25px;
+            margin-bottom: 0;
+            font-style: italic;
+            color: var(--primary-color);
+            font-size: 1.1rem;
+        }
+
+        .map-button {
+            position: relative;
+            display: inline-block;
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            color: #fff;
+            padding: 18px 35px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 1.2rem;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 0 6px 18px rgba(200, 107, 133, 0.5);
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .map-button i {
+            margin-right: 10px;
+            font-size: 1.1em;
+        }
+
+        .map-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 50%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            transform: skewX(-30deg);
+            transition: left 0.8s ease;
+            z-index: -1;
+        }
+
+        .map-button:hover {
+            transform: scale(1.05) translateY(-3px);
+            box-shadow: 0 10px 25px rgba(200, 107, 133, 0.6);
+        }
+
+        .map-button:hover::before {
+            left: 150%;
+        }
+
+        .signature {
+            margin-top: 45px;
+            font-family: var(--font-cursive);
+            font-size: 2rem;
+            color: var(--text-light);
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+        }
+
+
+        /* ----- Trạng thái khi đã mở ----- */
+        body.opened .intro-screen {
+            opacity: 0;
+            transform: scale(0.7);
+            pointer-events: none;
+            transition-delay: 0s;
+        }
+
+        body.opened .invitation-card {
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1) rotateY(0deg);
+            pointer-events: all;
+        }
+
+        body.opened .card-content>* {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        body.opened .card-content>*:nth-child(1) {
+            transition-delay: 0.8s;
+        }
+
+        body.opened .card-content>*:nth-child(2) {
+            transition-delay: 1.0s;
+        }
+
+        body.opened .card-content>*:nth-child(3) {
+            transition-delay: 1.2s;
+        }
+
+        body.opened .card-content>*:nth-child(4) {
+            transition-delay: 1.4s;
+        }
+
+        body.opened .card-content>*:nth-child(5) {
+            transition-delay: 1.6s;
+        }
+
+        body.opened .card-content>*:nth-child(6) {
+            transition-delay: 1.8s;
+        }
+
+        body.opened .card-content>*:nth-child(7) {
+            transition-delay: 2.0s;
+        }
+
+        /* ----- Hiệu ứng hạt bắn ra ----- */
+        .particle {
+            position: absolute;
+            background: var(--color);
+            border-radius: 50%;
+            opacity: 0;
+            pointer-events: none;
+            animation: burst-fly-up var(--duration) var(--delay) forwards;
+            font-size: var(--size);
+            text-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
+        }
+
+        .particle.fa-solid.fa-heart::before {
+            content: "\f004";
+            font-family: 'Font Awesome 6 Solid';
+        }
+
+        .particle.fa-solid.fa-star::before {
+            content: "\f005";
+            font-family: 'Font Awesome 6 Solid';
+        }
+
+        .particle.fa-solid.fa-circle::before {
+            content: "\f111";
+            font-family: 'Font Awesome 6 Solid';
+        }
+
+        @keyframes burst-fly-up {
+            0% {
+                transform: translate(var(--start-x), var(--start-y)) scale(0) rotate(0deg);
+                opacity: 0;
+            }
+
+            10% {
+                opacity: 1;
+                transform: translate(var(--start-x), var(--start-y)) scale(1) rotate(var(--rotate-start));
+            }
+
+            100% {
+                transform: translate(var(--end-x), var(--end-y)) scale(0.2) rotate(var(--rotate-end));
                 opacity: 0;
             }
         }
 
-        .timeline-item:hover .timeline-item-dot {
-            transform: translate(-50%, -50%) scale(1.4);
-            border-color: var(--accent-color);
-            box-shadow: 0 0 25px var(--glow-color-accent);
-        }
-
-        .timeline-item:hover .timeline-item-dot::after {
-            background-color: var(--accent-color);
-            animation-play-state: paused;
-        }
-
-        .timeline-item-content {
-            width: calc(50% - 60px);
-            background: var(--card-background);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            padding: 30px;
-            border-radius: 18px;
-            box-shadow: var(--shadow);
-            transition: var(--transition-smooth);
-            position: relative;
-            border: 1px solid var(--border-color);
-            border-left: 6px solid var(--primary-color);
-            transform: translateY(0);
-            z-index: 3;
-            overflow: hidden;
-            /* Cần thiết cho hiệu ứng shimmer */
-        }
-
-        /* Hiệu ứng shimmer */
-        .timeline-item-content::before {
-            content: '';
+        /* Hiệu ứng nền "bụi tiên" */
+        .sparkle {
             position: absolute;
-            top: 0;
-            left: -150%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(to right, transparent 0%, rgba(255, 255, 255, 0.1) 50%, transparent 100%);
-            transform: skewX(-25deg);
-            transition: left 0.7s ease-in-out;
-        }
-
-        .timeline-item:hover .timeline-item-content::before {
-            left: 150%;
-        }
-
-        .timeline-item:nth-child(even) .timeline-item-content {
-            border-left: none;
-            border-right: 6px solid var(--primary-color);
-        }
-
-        .timeline-item:hover .timeline-item-content {
-            transform: translateY(-10px) scale(1.03);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
-            border-left-color: var(--accent-color);
-        }
-
-        .timeline-item:nth-child(even):hover .timeline-item-content {
-            border-right-color: var(--accent-color);
-            border-left-color: transparent;
-        }
-
-        .card-body {
-            display: flex;
-            align-items: flex-start;
-            gap: 20px;
-        }
-
-        .card-icon {
-            flex-shrink: 0;
-            width: 40px;
-            height: 40px;
-            background: linear-gradient(to bottom, var(--primary-color), var(--secondary-color));
+            background-color: white;
             border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            transition: var(--transition-smooth);
-        }
-
-        .card-icon svg {
-            width: 22px;
-            height: 22px;
-            stroke: #fff;
-        }
-
-        .timeline-item:hover .card-icon {
-            background: linear-gradient(to bottom, var(--accent-color), #b40a5a);
-            transform: rotate(15deg) scale(1.1);
-        }
-
-        .card-text h3 {
-            margin: 0 0 10px 0;
-            color: #fff;
-            font-size: 1.7em;
-            font-weight: 600;
-            transition: color 0.3s;
-        }
-
-        .card-text p {
-            color: var(--light-text-color);
-            margin: 0;
-            font-size: 1.05em;
-        }
-
-        .timeline-item:hover .card-text h3 {
-            color: var(--accent-color);
-        }
-
-        /* Modal */
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(10, 10, 20, 0.7);
-            backdrop-filter: blur(8px);
             opacity: 0;
-            transition: opacity 0.4s ease;
-            align-items: center;
-            justify-content: center;
+            pointer-events: none;
+            animation: sparkle-anim var(--duration) var(--delay) ease-in-out infinite;
+            box-shadow: 0 0 5px white;
         }
 
-        .modal.active {
-            display: flex;
-            opacity: 1;
+        @keyframes sparkle-anim {
+
+            0%,
+            100% {
+                opacity: 0;
+                transform: scale(0.5) translate(var(--tx-start), var(--ty-start));
+            }
+
+            50% {
+                opacity: 0.8;
+                transform: scale(1.2) translate(var(--tx-end), var(--ty-end));
+            }
         }
 
-        .modal-content {
-            background: rgba(20, 20, 40, 0.9);
-            backdrop-filter: blur(15px);
-            padding: 40px;
-            border-radius: 18px;
-            width: 90%;
-            max-width: 600px;
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
-            position: relative;
-            transform: scale(0.9) translateY(-20px);
-            opacity: 0;
-            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            border: 1px solid var(--border-color);
-        }
-
-        .modal.active .modal-content {
-            transform: scale(1) translateY(0);
-            opacity: 1;
-        }
-
-        .modal-content h2 {
-            color: #fff;
-            font-size: 2em;
-            margin-bottom: 15px;
-        }
-
-        .modal-content p {
-            color: var(--light-text-color);
-            font-size: 1.1em;
-            line-height: 1.8;
-        }
-
-        .close-button {
-            color: #aaa;
-            position: absolute;
-            top: 15px;
-            right: 25px;
-            font-size: 40px;
-            transition: var(--transition-smooth);
-        }
-
-        .close-button:hover {
-            color: var(--accent-color);
-            transform: rotate(180deg) scale(1.1);
-        }
-
-        /* Responsive */
+        /* Media queries cho màn hình nhỏ hơn */
         @media (max-width: 768px) {
-            h1 {
-                font-size: 2.4em;
+            .intro-screen h2 {
+                font-size: 1.6rem;
+                margin-bottom: 25px;
             }
 
-            .custom-cursor {
-                display: none;
+            .envelope-wrapper {
+                padding: 10px;
             }
 
-            /* Tắt cursor trên mobile */
-            * {
-                cursor: auto;
+            .envelope {
+                width: 280px;
+                height: 180px;
             }
 
-            .timeline-container::before,
-            .timeline-progress {
-                left: 30px;
-                transform: none;
+            .envelope-flap {
+                border-bottom: 90px solid transparent;
+                border-left: 140px solid transparent;
+                border-right: 140px solid transparent;
             }
 
-            .timeline-item {
-                padding-left: 60px;
-                transform: rotateX(0) translateY(50px);
+            .envelope-seal {
+                top: 75px;
+                width: 38px;
+                height: 38px;
+                font-size: 1.1rem;
             }
 
-            .timeline-item-date,
-            .timeline-item:nth-child(even) .timeline-item-date {
-                text-align: left;
-                padding: 0;
+            .envelope-seal::before,
+            .envelope-seal::after {
+                width: 38px;
+                height: 38px;
+            }
+
+            .envelope-seal::before {
+                transform: translateX(-19px);
+            }
+
+            .envelope-seal::after {
+                transform: translateY(-19px);
+            }
+
+            .invitation-card {
+                padding: 30px;
+                max-width: 98%;
+                border-radius: 18px;
+            }
+
+            .card-content {
+                padding: 20px;
+                border-radius: 15px;
+            }
+
+            .card-content h1 {
+                font-size: 2.8rem;
+            }
+
+            .card-content .greeting {
+                font-size: 1.8rem;
+            }
+
+            .card-content p,
+            .details-box li,
+            .special-message-box p {
+                font-size: 1rem;
+                margin-bottom: 20px;
+            }
+
+            .details-box li {
                 margin-bottom: 15px;
             }
 
-            .timeline-item-dot {
-                left: 30px;
-                top: 35px;
-                transform: translateX(-50%);
+            .details-box .fa-solid {
+                font-size: 1.2rem;
+                width: 35px;
+                margin-right: 15px;
             }
 
-            .timeline-item-content,
-            .timeline-item:nth-child(even) .timeline-item-content {
-                width: 100%;
-                border-left: 6px solid var(--primary-color);
-                border-right: none;
+            .special-message-box {
+                padding: 20px;
+                border-radius: 15px;
             }
 
-            .timeline-item:nth-child(even):hover .timeline-item-content {
-                border-left-color: var(--accent-color);
-                border-right-color: transparent;
+            .contact-link {
+                padding: 10px 20px;
+                font-size: 1rem;
             }
 
-            .timeline-item:hover .timeline-item-content::before {
-                left: 200%;
+            .map-button {
+                padding: 14px 28px;
+                font-size: 1.05rem;
             }
 
-            /* Điều chỉnh shimmer cho mobile */
+            .signature {
+                font-size: 1.6rem;
+                margin-top: 35px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .intro-screen h2 {
+                font-size: 1.4rem;
+                margin-bottom: 20px;
+            }
+
+            .envelope {
+                width: 230px;
+                height: 150px;
+            }
+
+            .envelope-flap {
+                border-bottom: 75px solid transparent;
+                border-left: 115px solid transparent;
+                border-right: 115px solid transparent;
+            }
+
+            .envelope-seal {
+                top: 60px;
+                width: 30px;
+                height: 30px;
+                font-size: 0.9rem;
+            }
+
+            .envelope-seal::before,
+            .envelope-seal::after {
+                width: 30px;
+                height: 30px;
+            }
+
+            .envelope-seal::before {
+                transform: translateX(-15px);
+            }
+
+            .envelope-seal::after {
+                transform: translateY(-15px);
+            }
+
+            .invitation-card {
+                padding: 20px;
+            }
+
+            .card-content h1 {
+                font-size: 2.2rem;
+            }
+
+            .card-content .greeting {
+                font-size: 1.4rem;
+            }
+
+            .card-content p,
+            .details-box li,
+            .special-message-box p {
+                font-size: 0.9rem;
+            }
+
+            .details-box .fa-solid {
+                font-size: 1rem;
+                width: 28px;
+                margin-right: 10px;
+            }
+
+            .contact-link {
+                padding: 8px 15px;
+                font-size: 0.9rem;
+            }
+
+            .map-button {
+                padding: 10px 20px;
+                font-size: 0.9rem;
+            }
+
+            .signature {
+                font-size: 1.3rem;
+                margin-top: 30px;
+            }
         }
     </style>
 </head>
 
 <body>
-    <div class="custom-cursor"></div>
 
-    <h1>Timeline Sevy - Ban Nội dung và Giảng dạy</h1>
+    <!-- Hiệu ứng nền -->
+    <div id="sparkle-container"></div>
 
-    <div class="timeline-container">
-        <div class="timeline-progress"></div> <!-- Thêm thanh tiến trình -->
+    <!-- Âm thanh -->
+    <audio id="open-sound" src="https://cdn.pixabay.com/audio/2022/03/15/audio_245a8a6be7.mp3" preload="auto"></audio>
+    <audio id="close-sound" src="https://cdn.pixabay.com/audio/2022/10/05/audio_2910a80e1a.mp3" preload="auto"></audio>
+    <audio id="burst-sound" src="https://cdn.pixabay.com/audio/2022/02/09/audio_2b4ce773b0.mp3" preload="auto"></audio>
 
-        <!-- Event 1 -->
-        <div class="timeline-item" data-date="2025-08-26">
-            <div class="timeline-item-date">26/08/2025, 20h</div>
-            <div class="timeline-item-dot" data-event-id="e1"></div>
-            <div class="timeline-item-content" data-event-id="e1">
-                <div class="card-body">
-                    <div class="card-icon">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                            stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round"
-                                d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0h18M-7.5 14.25h.008v.008H-7.5v-.008z" />
-                        </svg>
-                    </div>
-                    <div class="card-text">
-                        <h3>Chọn Thời Gian Duyệt</h3>
-                        <p>Các nhóm chọn lịch duyệt thử chương trình với core nội dung.</p>
-                    </div>
+
+    <!-- Màn hình ban đầu -->
+    <div class="intro-screen" id="intro-screen">
+        <h2>Cậu có một lá thư đặc biệt!</h2>
+        <div class="envelope-wrapper" id="envelope-wrapper">
+            <div class="envelope">
+                <div class="letter"></div>
+                <div class="envelope-flap"></div>
+                <div class="envelope-seal">
+                    <i class="fa-solid fa-heart"></i>
                 </div>
             </div>
         </div>
+        <!-- Lời nhắc tương tác (MỚI) -->
+        <p class="click-prompt">Nhấn để mở</p>
+    </div>
 
-        <!-- Event 2 -->
-        <div class="timeline-item" data-date="2025-08-27">
-            <div class="timeline-item-date">27/08 - 06/09/2025</div>
-            <div class="timeline-item-dot" data-event-id="e2"></div>
-            <div class="timeline-item-content" data-event-id="e2">
-                <div class="card-body">
-                    <div class="card-icon">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                            stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round"
-                                d="M10.5 6h9.75M10.5 6a1.5 1.5 0 11-3 0m3 0a1.5 1.5 0 10-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-9.75 0h9.75" />
-                        </svg>
-                    </div>
-                    <div class="card-text">
-                        <h3>Duyệt Nội Dung</h3>
-                        <p>Duyệt chương trình và hoàn thiện phần giảng dạy.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
+    <!-- Thiệp mời (ẩn ban đầu) -->
+    <div class="invitation-card" id="invitation-card">
+        <i class="fa-solid fa-xmark close-btn" id="close-btn"></i>
+        <div class="card-content">
+            <!-- ======================================================= -->
+            <!-- ======== CHỈNH SỬA THÔNG TIN CỦA BẠN Ở ĐÂY ======== -->
+            <!-- ======================================================= -->
+            <h1>Lời Mời Đặc Biệt</h1>
 
-        <!-- Event 3 -->
-        <div class="timeline-item" data-date="2025-09-07">
-            <div class="timeline-item-date">07/09/2025</div>
-            <div class="timeline-item-dot" data-event-id="e3"></div>
-            <div class="timeline-item-content" data-event-id="e3">
-                <div class="card-body">
-                    <div class="card-icon">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                            stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round"
-                                d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                    </div>
-                    <div class="card-text">
-                        <h3>Final Check</h3>
-                        <p>Nhắc nhở trước ngày diễn ra sự kiện chính.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
+            <p class="greeting">Gửi Nguyễn Thị Phương,</p>
 
-        <!-- Event 4 -->
-        <div class="timeline-item" data-date="2025-09-08">
-            <div class="timeline-item-date">08/09/2025</div>
-            <div class="timeline-item-dot" data-event-id="e4"></div>
-            <div class="timeline-item-content" data-event-id="e4">
-                <div class="card-body">
-                    <div class="card-icon">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                            stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round"
-                                d="M15.362 5.214A8.252 8.252 0 0112 21 8.25 8.25 0 016.038 7.048 8.287 8.287 0 009 9.6a8.983 8.983 0 013.362-3.797z" />
-                            <path stroke-linecap="round" stroke-linejoin="round"
-                                d="M15.362 5.214A8.252 8.252 0 0112 21 8.25 8.25 0 016.038 7.048 8.287 8.287 0 009 9.6a8.983 8.983 0 013.362-3.797zM15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                        </svg>
-                    </div>
-                    <div class="card-text">
-                        <h3>Sự Kiện Chính</h3>
-                    </div>
-                </div>
+            <p>
+                Tớ là <strong>Thái Việt Hoàng</strong> đây. Cậu biết không, hôm nay trời đẹp lạ thường, nhưng tớ nghĩ sẽ
+                còn đẹp hơn nhiều nếu có cậu ở bên.
+                <br><br>
+                Vì vậy, tớ mạn phép viết lời mời này, hy vọng có thể cùng cậu thưởng thức một bữa tối ấm cúng, rồi sau
+                đó là một buổi dạo phố lãng mạn dưới ánh đèn.
+            </p>
+
+            <div class="details-box">
+                <ul>
+                    <li>
+                        <i class="fa-solid fa-utensils"></i>
+                        <strong>Quán ăn:</strong> Cô Thanh Bún Riêu Bề Bề - Bánh Đa Cá
+                    </li>
+                    <li>
+                        <i class="fa-solid fa-calendar-days"></i>
+                        <strong>Thời gian:</strong> Chủ nhật, 24/08/2025 lúc 7h15 tối
+                    </li>
+                    <li>
+                        <i class="fa-solid fa-location-dot"></i>
+                        <strong>Địa chỉ:</strong> 51 Đ. Cổ Nhuế, Cổ Nhuế, Bắc Từ Liêm, Hà Nội
+                    </li>
+                </ul>
             </div>
+
+            <!-- Phần liên hệ và lời nhắn được làm đẹp hơn -->
+            <div class="special-message-box">
+                <p>
+                    Nếu có vấn đề gì hoặc muốn xác nhận tham gia, cậu có thể liên hệ với tớ nhé!
+                </p>
+                <a href="https://www.facebook.com/messages/e2ee/t/29427362673576649" target="_blank"
+                    class="contact-link">
+                    <i class="fa-brands fa-facebook-messenger"></i> &nbsp; Nhắn tin cho tớ!
+                </a>
+                <p>
+                    P.S. Nhớ cho tớ đánh giá 5 sao và thêm điểm cộng nữa thì càng tốt hihi! 😉
+                </p>
+            </div>
+
+
+            <a href="https://www.google.com/maps/place/C%C3%B4+Thanh+B%C3%BAn+Ri%C3%AAu+B%E1%BB%81+B%E1%BB%81+-+B%C3%A1nh+%C4%90a+C%C3%A1/@21.0599869,105.7796589,17z/data=!3m1!4b1!4m6!3m5!1s0x3135ab2aab9dce1b:0x69ce40322fa54915!8m2!3d21.0599869!4d105.7822338!16s%2Fg%2F11q_49hvfv?hl=vi&entry=ttu&g_ep=EgoyMDI1MDgxOS4wIKXMDSoASAFQAw%3D%3D"
+                target="_blank" class="map-button">
+                <i class="fa-solid fa-map-location-dot"></i>&nbsp; Xem đường đi nhé!
+            </a>
+
+            <p class="signature">
+                Người gửi,
+                <br>
+                Thái Việt Hoàng
+            </p>
+            <!-- ======================================================= -->
+            <!-- =================== HẾT PHẦN CHỈNH SỬA =================== -->
+            <!-- ======================================================= -->
         </div>
     </div>
 
-    <!-- Modal -->
-    <div id="eventModal" class="modal">
-        <div class="modal-content">
-            <span class="close-button">&times;</span>
-            <h2 id="modalEventTitle">Tiêu đề sự kiện</h2>
-            <p id="modalEventDescription">Mô tả chi tiết về sự kiện sẽ hiển thị ở đây.</p>
-            <p><small id="modalEventDate" style="color: #888;">Ngày diễn ra: N/A</small></p>
-        </div>
-    </div>
+    <!-- Container cho hiệu ứng hạt -->
+    <div id="particle-container"></div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const modal = document.getElementById('eventModal');
-            const closeButton = document.querySelector('.close-button');
-            const modalTitle = document.getElementById('modalEventTitle');
-            const modalDescription = document.getElementById('modalEventDescription');
-            const modalDate = document.getElementById('modalEventDate');
+        document.addEventListener('DOMContentLoaded', function () {
+            const envelopeWrapper = document.getElementById('envelope-wrapper');
+            const closeBtn = document.getElementById('close-btn');
+            const body = document.body;
+            const particleContainer = document.getElementById('particle-container');
+            const sparkleContainer = document.getElementById('sparkle-container');
+            const openSound = document.getElementById('open-sound');
+            const closeSound = document.getElementById('close-sound');
+            const burstSound = document.getElementById('burst-sound');
 
-            const eventData = {
-                e1: {
-                    title: "Chọn Thời Gian Duyệt",
-                    description: "Đây là giai đoạn khởi đầu, nơi các bên liên quan sẽ ngồi lại để thống nhất một thời điểm phù hợp nhất để bắt đầu quá trình duyệt nội dung. Việc lựa chọn thời điểm tối ưu sẽ đảm bảo hiệu quả và sự tham gia đầy đủ.",
-                    date: "20h ngày 26/08/2025"
-                },
-                e2: {
-                    title: "Duyệt Nội Dung",
-                    description: "Trong khoảng thời gian này, toàn bộ nội dung sẽ được kiểm tra kỹ lưỡng, đánh giá chất lượng, độ chính xác, và sự phù hợp với các tiêu chuẩn đã đặt ra. Các chỉnh sửa và góp ý sẽ được thực hiện để hoàn thiện nội dung.",
-                    date: "27/08/2025 - 06/09/2025"
-                },
-                e3: {
-                    title: "Final Check & Set-up",
-                    description: "Ngày này dành riêng cho việc chuẩn bị cuối cùng: tổng duyệt kịch bản, kiểm tra lại cơ sở vật chất, thiết bị, sắp xếp nhân sự, và hoàn tất mọi hạng mục nhỏ nhất để đảm bảo sự kiện chính diễn ra suôn sẻ và thành công mỹ mãn.",
-                    date: "07/09/2025"
-                },
-                e4: {
-                    title: "Sự Kiện Chính",
-                    description: "Đây là ngày đỉnh điểm của toàn bộ quá trình, nơi mọi nỗ lực chuẩn bị được hiện thực hóa. Sự kiện sẽ diễn ra theo đúng kế hoạch, mang đến những trải nghiệm và kết quả mong đợi.",
-                    date: "08/09/2025"
+            let isOpening = false;
+
+            const openEnvelope = () => {
+                if (isOpening || body.classList.contains('opened')) return;
+                isOpening = true;
+                envelopeWrapper.style.animation = 'none';
+                envelopeWrapper.classList.add('opening');
+                openSound.play();
+
+                setTimeout(() => {
+                    body.classList.add('opened');
+                    createParticleBurst();
+                    burstSound.play();
+                }, 1000);
+
+                setTimeout(() => {
+                    isOpening = false;
+                    envelopeWrapper.classList.remove('opening');
+                }, 2000);
+            };
+
+            const closeEnvelope = () => {
+                if (isOpening) return;
+                body.classList.remove('opened');
+                closeSound.play();
+                envelopeWrapper.style.animation = 'float 3s ease-in-out infinite';
+            };
+
+            const createParticleBurst = () => {
+                particleContainer.innerHTML = '';
+                const colors = ['#f8cdda', '#e6a4b4', '#c86b85', '#ffffff', '#ffedc2', '#d4a5a5'];
+                const particleCount = 60;
+                const seal = document.querySelector('.envelope-seal');
+                const sealRect = seal.getBoundingClientRect();
+                const centerX = sealRect.left + sealRect.width / 2;
+                const centerY = sealRect.top + sealRect.height / 2;
+
+                for (let i = 0; i < particleCount; i++) {
+                    const particle = document.createElement('i');
+                    const randomIcon = Math.random() > 0.7 ? 'fa-solid fa-heart' : (Math.random() > 0.4 ? 'fa-solid fa-star' : 'fa-solid fa-circle');
+                    particle.className = `particle ${randomIcon}`;
+
+                    const size = Math.random() * 12 + 6;
+                    const duration = Math.random() * 2 + 1;
+                    const delay = Math.random() * 0.3;
+                    const color = colors[Math.floor(Math.random() * colors.length)];
+                    const angle = Math.random() * Math.PI * 2;
+                    const distance = Math.random() * 200 + 100;
+                    const endX = centerX + Math.cos(angle) * distance;
+                    const endY = centerY + Math.sin(angle) * distance;
+                    const rotateStart = Math.random() * 360;
+                    const rotateEnd = Math.random() * 720 + 360;
+
+                    particle.style.setProperty('--size', `${size}px`);
+                    particle.style.setProperty('--duration', `${duration}s`);
+                    particle.style.setProperty('--delay', `${delay}s`);
+                    particle.style.setProperty('--color', color);
+                    particle.style.setProperty('--start-x', `${centerX}px`);
+                    particle.style.setProperty('--start-y', `${centerY}px`);
+                    particle.style.setProperty('--end-x', `${endX}px`);
+                    particle.style.setProperty('--end-y', `${endY}px`);
+                    particle.style.setProperty('--rotate-start', `${rotateStart}deg`);
+                    particle.style.setProperty('--rotate-end', `${rotateEnd}deg`);
+
+                    particle.style.left = `${centerX}px`;
+                    particle.style.top = `${centerY}px`;
+                    particle.style.transform = `translate(-50%, -50%)`;
+
+                    particleContainer.appendChild(particle);
+
+                    setTimeout(() => particle.remove(), (duration + delay) * 1000);
                 }
             };
 
-            // Mở modal
-            document.querySelectorAll('.timeline-item-dot, .timeline-item-content').forEach(item => {
-                item.addEventListener('click', function () {
-                    const eventId = this.dataset.eventId;
-                    const data = eventData[eventId];
-                    if (data) {
-                        modalTitle.textContent = data.title;
-                        modalDescription.textContent = data.description;
-                        modalDate.textContent = `Ngày diễn ra: ${data.date}`;
-                        modal.classList.add('active');
-                    }
-                });
-            });
+            const createSparkles = () => {
+                const sparkleCount = 30;
+                for (let i = 0; i < sparkleCount; i++) {
+                    const sparkle = document.createElement('div');
+                    sparkle.className = 'sparkle';
+                    const size = Math.random() * 5 + 2;
+                    const duration = Math.random() * 6 + 4;
+                    const delay = Math.random() * 6;
 
-            // Đóng modal
-            closeButton.addEventListener('click', () => modal.classList.remove('active'));
-            window.addEventListener('click', (event) => {
-                if (event.target === modal) modal.classList.remove('active');
-            });
+                    sparkle.style.width = `${size}px`;
+                    sparkle.style.height = `${size}px`;
+                    sparkle.style.top = `${Math.random() * 100}%`;
+                    sparkle.style.left = `${Math.random() * 100}%`;
+                    sparkle.style.setProperty('--duration', `${duration}s`);
+                    sparkle.style.setProperty('--delay', `${delay}s`);
+                    sparkle.style.setProperty('--tx-start', `${Math.random() * 30 - 15}px`);
+                    sparkle.style.setProperty('--ty-start', `${Math.random() * 30 - 15}px`);
+                    sparkle.style.setProperty('--tx-end', `${Math.random() * 30 - 15}px`);
+                    sparkle.style.setProperty('--ty-end', `${Math.random() * 30 - 15}px`);
 
-            // Hiệu ứng xuất hiện khi cuộn
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.classList.add('visible');
-                    }
-                });
-            }, { threshold: 0.3 });
-            document.querySelectorAll('.timeline-item').forEach(item => observer.observe(item));
-
-            // Hiệu ứng thanh tiến trình cuộn
-            const timelineContainer = document.querySelector('.timeline-container');
-            const timelineProgress = document.querySelector('.timeline-progress');
-            const handleScroll = () => {
-                const containerRect = timelineContainer.getBoundingClientRect();
-                const viewportHeight = window.innerHeight;
-                // Tính toán tiến trình chỉ khi container nằm trong viewport
-                const progress = Math.min(1, Math.max(0, (viewportHeight - containerRect.top) / (viewportHeight + containerRect.height)));
-                document.documentElement.style.setProperty('--scroll-progress', `${progress * 100}%`);
+                    sparkleContainer.appendChild(sparkle);
+                }
             };
-            window.addEventListener('scroll', handleScroll, { passive: true });
-            handleScroll(); // Chạy lần đầu khi tải trang
 
-            // Hiệu ứng con trỏ chuột
-            const cursor = document.querySelector('.custom-cursor');
-            const interactiveElements = document.querySelectorAll('h1, .timeline-item-dot, .timeline-item-content, .close-button');
-            window.addEventListener('mousemove', e => {
-                cursor.style.left = e.clientX + 'px';
-                cursor.style.top = e.clientY + 'px';
-            });
-            interactiveElements.forEach(el => {
-                el.addEventListener('mouseenter', () => cursor.classList.add('pointer'));
-                el.addEventListener('mouseleave', () => cursor.classList.remove('pointer'));
-            });
+            envelopeWrapper.addEventListener('click', openEnvelope);
+            closeBtn.addEventListener('click', closeEnvelope);
+            createSparkles();
         });
     </script>
 </body>
