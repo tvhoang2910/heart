@@ -2,621 +2,623 @@
 <html lang="vi">
 
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Lời Mời Đặc Biệt Nhất</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nhật Ký Tình Yêu 3D - Cân Đối & Lãng Mạn</title>
     <style>
-        :root {
-            --primary-color: #ff4757;
-            --bg-start: #1c0f1a;
-            --bg-end: #3c1032;
-            --card-bg: #fffdf7;
-            --text-color: #6d584b;
-        }
+        /* --- Import Font Lãng Mạn --- */
+        @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&display=swap');
 
+        /* --- CSS Reset & Nền --- */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', 'Helvetica Neue', sans-serif;
         }
 
         body {
+            height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 100vh;
-            background: linear-gradient(135deg, var(--bg-start), var(--bg-end));
+            font-family: 'Dancing Script', cursive;
+            background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
             overflow: hidden;
-            perspective: 1500px;
+            /* Ẩn thanh cuộn */
+            position: relative;
         }
 
-        #particle-canvas {
-            position: fixed;
+        /* --- Hiệu ứng ngôi sao lấp lánh --- */
+        .stars {
+            position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            z-index: 1;
-        }
-
-        .scene-container {
-            position: relative;
-            z-index: 10;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            width: 100%;
-            height: 100%;
-        }
-
-        .letter-container {
-            position: relative;
-            width: 85vw;
-            max-width: 420px;
-            height: 280px;
-            cursor: pointer;
-            transform-style: preserve-3d;
-            transition: transform 0.8s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.5s 0.8s;
-        }
-
-        .letter-container.flipped {
-            transform: rotateY(180deg);
-        }
-
-        .letter-container.hidden {
-            opacity: 0;
-            transform: scale(0.8);
+            overflow: hidden;
             pointer-events: none;
+            /* Không chặn sự kiện chuột */
+            z-index: 0;
+            /* Đảm bảo ở lớp dưới cùng */
         }
 
-        .letter {
-            width: 100%;
-            height: 100%;
-            position: relative;
-            transform-style: preserve-3d;
-            animation: float 6s ease-in-out infinite;
-            transition: transform 0.3s ease-out;
+        .star {
+            position: absolute;
+            background-color: white;
+            border-radius: 50%;
+            box-shadow: 0 0 5px white, 0 0 10px white, 0 0 15px white;
+            animation: twinkle 5s infinite ease-in-out;
         }
 
-        @keyframes float {
+        @keyframes twinkle {
 
             0%,
             100% {
-                transform: translateZ(0) rotateX(5deg) translateY(0);
+                opacity: 0.5;
+                transform: scale(0.8);
             }
 
             50% {
-                transform: translateZ(30px) rotateX(-5deg) translateY(-15px);
+                opacity: 1;
+                transform: scale(1);
             }
         }
 
-        .letter-front,
-        .letter-back {
+        /* --- Hiệu ứng Trái Tim 3D --- */
+        .hearts-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            pointer-events: none;
+            z-index: 1;
+            /* Lớp trên sao, dưới sách */
+        }
+
+        .heart {
+            position: absolute;
+            transform: rotate(-45deg);
+            background-color: #ff69b4;
+            /* Hồng nóng */
+            box-shadow: 0 0 10px rgba(255, 105, 180, 0.5);
+            animation: flyAndFade 6s infinite ease-out;
+            opacity: 0;
+        }
+
+        .heart::before,
+        .heart::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-color: #ff69b4;
+            border-radius: 50%;
+        }
+
+        .heart::before {
+            top: -50%;
+            left: 0;
+        }
+
+        .heart::after {
+            top: 0;
+            left: 50%;
+        }
+
+        @keyframes flyAndFade {
+            0% {
+                transform: translate(-50%, 0) rotate(-45deg) scale(0);
+                opacity: 0;
+            }
+
+            10% {
+                opacity: 0.8;
+                transform: translate(-50%, -20%) rotate(-45deg) scale(1);
+            }
+
+            100% {
+                transform: translate(-50%, -100vh) rotate(-45deg) scale(0.5);
+                opacity: 0;
+            }
+        }
+
+
+        /* --- Thiết kế cuốn sách 3D --- */
+        .book-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+            z-index: 10;
+            /* Đảm bảo sách luôn ở trên cùng */
+        }
+
+        .book {
+            width: 800px;
+            /* Chiều rộng tổng của 2 trang khi mở */
+            height: 550px;
+            position: relative;
+            transform-style: preserve-3d;
+            perspective: 2000px;
+            /* Căn giữa cuốn sách bằng translateX */
+            transform: translateX(-50%);
+            left: 50%;
+        }
+
+        .page {
+            width: 400px;
+            /* Chiều rộng của một trang */
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 400px;
+            /* Tất cả các trang bắt đầu từ vị trí gáy sách (400px từ trái) */
+            transform-origin: left;
+            /* Lật từ bên trái của tấm trang (tức là gáy sách) */
+            transform-style: preserve-3d;
+            transition: transform 1.2s cubic-bezier(0.65, 0, 0.35, 1);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            border-radius: 0 10px 10px 0;
+            cursor: pointer;
+        }
+
+        /* Bìa sách khi đóng */
+        .page.cover {
+            left: 0;
+            /* Bìa nằm ở vị trí 0px từ trái của cuốn sách */
+            transform-origin: 100% 50%;
+            /* Lật từ mép phải của bìa */
+            border-radius: 0 10px 10px 0;
+            transition: transform 1.5s cubic-bezier(0.65, 0, 0.35, 1);
+            /* Transition riêng cho bìa khi mở */
+            pointer-events: auto;
+            /* Cho phép click vào bìa */
+        }
+
+        /* Hiệu ứng khi bìa sách đã lật (mở ra) */
+        .page.cover.flipped {
+            transform: rotateY(-180deg);
+        }
+
+        /* Các trang nội dung khi cuốn sách đã mở */
+        /* Các trang nội dung sẽ bắt đầu lật từ giữa sách (400px) */
+        .page.content-page {
+            left: 400px;
+            transform-origin: left;
+            transition: transform 1.2s cubic-bezier(0.65, 0, 0.35, 1);
+        }
+
+        .page.content-page.flipped {
+            transform: rotateY(-180deg);
+        }
+
+        /* Mặt trước và mặt sau của mỗi trang */
+        .page-front,
+        .page-back {
             position: absolute;
             width: 100%;
             height: 100%;
             backface-visibility: hidden;
-            border-radius: 12px;
-            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2), inset 0 0 15px rgba(255, 250, 240, 0.5);
-            background: var(--card-bg);
-            border: 1px solid #eae0d0;
-            padding: 25px;
+            /* Ẩn mặt sau khi không được lật */
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            text-align: center;
-            font-size: 18px;
-            color: var(--text-color);
-            font-weight: 500;
+            padding: 20px;
+            background-color: #fff8f9;
+            /* Màu giấy hơi hồng */
         }
 
-        .letter-back {
+        .page-front {
+            border-radius: 0 10px 10px 0;
+        }
+
+        .page-back {
             transform: rotateY(180deg);
-            background: #f9f4e9;
+            border-radius: 10px 0 0 10px;
         }
 
-        .heart-container {
-            display: none;
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%) scale(0);
-            cursor: pointer;
-            z-index: 20;
-            transition: transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        /* Trang bìa */
+        .page.cover .page-front {
+            background: linear-gradient(45deg, #ffdde1, #ee9ca7);
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            border-radius: 0 10px 10px 0;
         }
 
-        .heart-container.visible {
-            display: block;
-            transform: translate(-50%, -50%) scale(1);
+        .page.cover .page-front h1 {
+            font-size: 3rem;
+            margin-bottom: 10px;
         }
 
-        .heart-3d {
-            position: relative;
-            animation: bobAndGlow 4s infinite ease-in-out;
-            filter: drop-shadow(0 0 10px rgba(255, 71, 87, 0.7)) drop-shadow(0 0 20px rgba(255, 71, 87, 0.5)) drop-shadow(0 0 30px rgba(255, 71, 87, 0.3));
-            transform: rotate(15deg);
+        .page.cover .page-front p {
+            font-size: 1.5rem;
         }
 
-        @keyframes bobAndGlow {
-
-            0%,
-            100% {
-                transform: translateY(0) scale(1) rotate(15deg);
-            }
-
-            50% {
-                transform: translateY(-20px) scale(1.05) rotate(10deg);
-            }
+        .page.cover .page-back {
+            background: linear-gradient(45deg, #ee9ca7, #ffdde1);
+            /* Màu bìa sau */
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            border-radius: 10px 0 0 10px;
         }
 
-        .heart-3d svg {
-            width: 100px;
-            height: 100px;
-            overflow: visible;
-            transition: width 0.2s, height 0.2s;
+
+        /* Nội dung trang */
+        .page-content img {
+            max-width: 90%;
+            max-height: 80%;
+            object-fit: cover;
+            border-radius: 8px;
+            border: 5px solid white;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
 
-        .heart-path {
-            fill: var(--primary-color);
-            stroke: #ff3344;
-            stroke-width: 0.5;
-            filter: drop-shadow(0 15px 25px rgba(255, 71, 87, 0.4));
-        }
-
-        .heart-crack {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            opacity: 0;
-            transition: opacity 0.3s;
-            pointer-events: none;
-        }
-
-        .explosion-effect {
-            position: fixed;
-            pointer-events: none;
-            z-index: 100;
-        }
-
-        .invitation {
-            display: none;
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            background: rgba(255, 255, 255, 0.8);
-            backdrop-filter: blur(25px) saturate(180%);
-            padding: 45px;
-            border-radius: 24px;
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            box-shadow: 0 30px 70px rgba(0, 0, 0, 0.25);
+        .page-content .text-block {
+            /* Sử dụng class text-block cho nội dung tĩnh */
+            font-size: 1.6rem;
+            color: #5d4954;
             text-align: center;
-            max-width: 90vw;
-            width: 480px;
-            z-index: 99;
-            color: #2c2c2c;
-            font-weight: 500;
-            opacity: 0;
-            transform: translate(-50%, -50%) scale(0.3) rotateX(70deg) translateZ(-300px);
+            line-height: 1.6;
+            padding: 15px;
+            width: 90%;
+            height: 80%;
+            display: flex;
+            /* Dùng flex để căn giữa nội dung theo chiều dọc */
+            justify-content: center;
+            align-items: center;
+            background-color: #fffafb;
+            /* Nền hơi hồng nhạt */
+            border: 2px dashed #ffb6c1;
+            /* Viền nét đứt nhẹ nhàng */
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            overflow: auto;
+            /* Thêm thanh cuộn nếu nội dung quá dài */
         }
 
-        .invitation.visible {
-            display: block;
-            animation: revealCard 1.2s cubic-bezier(0.165, 0.84, 0.44, 1) forwards;
-            animation-delay: 0.5s;
+        /* Đánh số trang */
+        .page-number {
+            position: absolute;
+            bottom: 15px;
+            font-size: 1rem;
+            color: #c9a7b9;
         }
 
-        .invitation h1 {
-            background: linear-gradient(120deg, #ff4757, #ff6b81);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            font-size: 32px;
-            margin-bottom: 20px;
-            font-weight: 800;
+        .page-front .page-number {
+            right: 15px;
         }
 
-        .invitation p {
-            font-size: 19px;
-            line-height: 1.8;
-            margin-bottom: 28px;
+        .page-back .page-number {
+            left: 15px;
         }
 
-        .invitation p.final-line {
-            font-weight: 600;
-            font-size: 20px;
-            color: var(--primary-color);
+        .page.cover .page-number {
+            display: none;
+            /* Bìa không có số trang */
         }
 
-        @keyframes revealCard {
-            to {
-                opacity: 1;
-                transform: translate(-50%, -50%) scale(1) rotateX(0deg) translateZ(0);
-            }
+
+        /* Nút điều khiển */
+        .navigation {
+            display: flex;
+            gap: 20px;
+            margin-top: 30px;
+            /* Tạo khoảng cách với cuốn sách */
+            z-index: 10;
         }
 
-        /* Hiệu ứng mới cho mảnh nổ */
-        .heart-micro {
-            filter: drop-shadow(0 0 3px rgba(255, 71, 87, 0.8));
+        button {
+            padding: 12px 25px;
+            font-family: 'Arial', sans-serif;
+            font-size: 16px;
+            font-weight: bold;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            background-color: white;
+            color: #ee9ca7;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+            background-color: #ffdde1;
+        }
+
+        button:disabled {
+            cursor: not-allowed;
+            opacity: 0.5;
         }
     </style>
 </head>
 
 <body>
-    <canvas id="particle-canvas"></canvas>
 
-    <div class="scene-container">
-        <div class="letter-container" id="letterContainer">
-            <div class="letter" id="letter">
-                <div class="letter-front">
-                    💌 Một Bất Ngờ Đang Chờ Đợi... 💌<br>
-                    <small style="margin-top: 10px; opacity: 0.8;">(Click để khám phá)</small>
+    <!-- Hiệu ứng ngôi sao -->
+    <div class="stars" id="stars-container"></div>
+
+    <!-- Hiệu ứng trái tim -->
+    <div class="hearts-container" id="hearts-container"></div>
+
+    <div class="book-container">
+        <div class="book" id="book">
+            <!--
+                Cuốn sách có tổng cộng 9 "tấm" page (chỉ số 0-8).
+                Mỗi tấm page có 2 mặt (front/back), tổng cộng 18 mặt.
+                Trang 0: Bìa trước và bìa sau
+                Trang 1-5: Mỗi tấm page hiển thị 2 ảnh (10 ảnh)
+                Trang 6: 1 ảnh (mặt trước), Lời tỏ tình #1 (mặt sau)
+                Trang 7: Lời tỏ tình #2 (mặt trước), Lời tỏ tình #3 (mặt sau)
+                Trang 8: Lời tỏ tình #4 (mặt trước), Lời tỏ tình #5 (mặt sau)
+            -->
+
+            <!-- Page 0: Bìa sách -->
+            <div class="page cover" data-page-index="0">
+                <div class="page-front">
+                    <h1>Nhật Ký Tình Yêu</h1>
+                    <p>Dành tặng em...</p>
                 </div>
-                <div class="letter-back">
-                    Sẵn sàng chưa nào?<br>
-                    Điều kỳ diệu sắp bắt đầu...
+                <div class="page-back">
+                    <p style="font-size: 1.5rem; text-align: center;">Tình yêu của chúng ta</p>
                 </div>
             </div>
+
+            <!-- Page 1: Ảnh 1 & Ảnh 2 -->
+            <div class="page content-page" data-page-index="1">
+                <div class="page-front page-content">
+                    <img src="photobooth-2025-09-14.png" alt="Kỷ niệm 1">
+                    <span class="page-number">1</span>
+                </div>
+                <div class="page-back page-content">
+                    <img src="photobooth-2025-09-14 (2).png" alt="Kỷ niệm 2">
+                    <span class="page-number">2</span>
+                </div>
+            </div>
+
+            <!-- Page 2: Ảnh 3 & Ảnh 4 -->
+            <div class="page content-page" data-page-index="2">
+                <div class="page-front page-content">
+                    <img src="photobooth-2025-09-14 (3).png" alt="Kỷ niệm 3">
+                    <span class="page-number">3</span>
+                </div>
+                <div class="page-back page-content">
+                    <img src="photobooth-2025-09-14 (4).png" alt="Kỷ niệm 4">
+                    <span class="page-number">4</span>
+                </div>
+            </div>
+
+            <!-- Page 3: Ảnh 5 & Ảnh 6 -->
+            <div class="page content-page" data-page-index="3">
+                <div class="page-front page-content">
+                    <img src="photobooth-2025-09-14 (5).png" alt="Kỷ niệm 5">
+                    <span class="page-number">5</span>
+                </div>
+                <div class="page-back page-content">
+                    <img src="photobooth-2025-09-14 (6).png" alt="Kỷ niệm 6">
+                    <span class="page-number">6</span>
+                </div>
+            </div>
+
+            <!-- Page 4: Ảnh 7 & Ảnh 8 -->
+            <div class="page content-page" data-page-index="4">
+                <div class="page-front page-content">
+                    <img src="photobooth-2025-09-14 (8).png" alt="Kỷ niệm 7">
+                    <span class="page-number">7</span>
+                </div>
+                <div class="page-back page-content">
+                    <img src="photobooth-2025-09-14 (9).png" alt="Kỷ niệm 8">
+                    <span class="page-number">8</span>
+                </div>
+            </div>
+
+            <!-- Page 5: Ảnh 9 & Ảnh 10 (Ảnh cuối cùng) -->
+            <div class="page content-page" data-page-index="5">
+                <div class="page-front page-content">
+                    <img src="photobooth-2025-09-14 (10).png" alt="Kỷ niệm 9">
+                    <span class="page-number">9</span>
+                </div>
+                <div class="page-back page-content">
+                    <img src="download.jpg" alt="Kỷ niệm 10">
+                    <span class="page-number">10</span>
+                </div>
+            </div>
+
+            <!-- Page 6: Lời tỏ tình #1 & Lời tỏ tình #2 -->
+            <div class="page content-page" data-page-index="6">
+                <div class="page-front page-content">
+                    <div class="text-block">
+                        "Mỗi khi nhìn thấy cậu, trái tim tớ như được sưởi ấm. Tớ thích cái cách tớ trở nên ngớ ngẩn mỗi
+                        khi ở gần cậu.Từ khi cậu xuất hiện, cuộc sống của tớ như có thêm một gam màu mới, rực rỡ hơn rất
+                        nhiều."
+                    </div>
+                    <span class="page-number">11</span>
+                </div>
+                <div class="page-back page-content">
+                    <div class="text-block">
+                        "Cậu còn nhớ lần chúng ta cùng giải quyết việc làm slide cho sevy không? Lúc ấy, tớ thấy vui khi
+                        mình giúp ích được cho cậu."
+                    </div>
+                    <span class="page-number">12</span>
+                </div>
+            </div>
+
+            <!-- Page 7: Lời tỏ tình #3 & Lời tỏ tình #4 -->
+            <div class="page content-page" data-page-index="7">
+                <div class="page-front page-content">
+                    <div class="text-block">
+                        "Tớ thích sự hồn nhiên, đáng yêu của cậu.Tớ ngưỡng mộ sự mạnh mẽ, độc lập của cậu.Cậu luôn biết
+                        cách làm cho mọi người xung quanh cảm thấy thoải mái và vui vẻ.Cậu luôn là người đầu tiên tớ
+                        nghĩ đến khi có điều gì thú vị muốn kể."
+                    </div>
+                    <span class="page-number">13</span>
+                </div>
+                <div class="page-back page-content">
+                    <div class="text-block">
+                        "Tớ muốn được cùng cậu viết nên những câu chuyện đẹp của riêng chúng ta.Tớ muốn được cùng cậu
+                        chia sẻ mọi buồn vui trong cuộc sống.Tớ muốn được chăm sóc cho cậu, được ở bên cạnh cậu mỗi
+                        ngày."
+                    </div>
+                    <span class="page-number">14</span>
+                </div>
+            </div>
+
+            <!-- Page 8: Lời tỏ tình #5 & Bìa sau cuối cùng -->
+            <div class="page content-page" data-page-index="8">
+                <div class="page-front page-content">
+                    <div class="text-block">
+                        "Tớ muốn được nắm tay cậu, được cùng cậu đi qua những tháng ngày phía trước.Nếu cậu cho tớ một
+                        cơ hội, tớ sẽ không làm cậu thất vọng.Dù cậu quyết định thế nào, tớ vẫn sẽ tôn trọng. Nhưng tớ
+                        rất hy vọng chúng ta có thể tiến xa hơn."
+                    </div>
+                    <span class="page-number">15</span>
+                </div>
+                <div class="page-back">
+                    <p style="font-size: 1.5rem; color: #5d4954; text-align: center;">Mãi mãi bên nhau! ❤️</p>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Nút điều khiển -->
+        <div class="navigation">
+            <button id="prevBtn">Trang trước</button>
+            <button id="nextBtn">Trang sau</button>
         </div>
     </div>
 
-    <div class="heart-container" id="heartContainer">
-        <div class="heart-3d">
-            <svg id="heart-svg" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path class="heart-path"
-                    d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.41 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.41 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z">
-                </path>
-            </svg>
-            <svg class="heart-crack" id="crack1" viewBox="0 0 100 100" preserveAspectRatio="none">
-                <path d="M40 0 V40 L55 50 L60 65 V100" stroke="rgba(0,0,0,0.3)" stroke-width="1" fill="none" />
-            </svg>
-            <svg class="heart-crack" id="crack2" viewBox="0 0 100 100" preserveAspectRatio="none">
-                <path d="M65 0 V20 L50 35 L45 55 L50 70 V100" stroke="rgba(0,0,0,0.3)" stroke-width="1" fill="none" />
-            </svg>
-        </div>
-    </div>
-
-    <div class="invitation" id="invitation">
-        <h1>💌 Cậu có muốn...</h1>
-        <p>Cùng tớ đi chơi vào cuối tuần này không?</p>
-        <p>Một ngày thảnh thơi với cà phê thơm,<br>
-            và những câu chuyện chỉ dành riêng cho đôi ta.</p>
-        <p class="final-line">👉 Đồng ý đi, nhé?</p>
-    </div>
-
-    <audio id="pop-sound" src="https://assets.codepen.io/165585/pop-sound.mp3" preload="auto"></audio>
-    <audio id="explosion-sound" src="https://assets.codepen.io/165585/explosion.mp3" preload="auto"></audio>
 
     <script>
-        // --- 1. CONFIG & SETUP ---
-        const config = {
-            letterRotationFactor: 20,
-            heart: {
-                initialSize: 100,
-                growFactor: 15,
-                maxSize: 350,
-            },
-            explosion: {
-                flash: true,
-                shockwave: true,
-                coreParticles: 100,
-                confetti: 120,
-                sparkles: 60,
-                glowEmbers: 40,
-                dust: 80
-            },
-            backgroundParticles: {
-                count: 150,
-                mouseRadius: 80
-            }
-        };
+        document.addEventListener('DOMContentLoaded', function () {
+            // --- Hiệu ứng ngôi sao ---
+            const starsContainer = document.getElementById('stars-container');
+            const numStars = 100;
 
-        const letterContainer = document.getElementById('letterContainer');
-        const letter = document.getElementById('letter');
-        const heartContainer = document.getElementById('heartContainer');
-        const heartSvg = document.getElementById('heart-svg');
-        const crack1 = document.getElementById('crack1');
-        const crack2 = document.getElementById('crack2');
-        const invitation = document.getElementById('invitation');
-        const popSound = document.getElementById('pop-sound');
-        const explosionSound = document.getElementById('explosion-sound');
+            for (let i = 0; i < numStars; i++) {
+                let star = document.createElement('div');
+                star.className = 'star';
+                let x = Math.random() * 100;
+                let y = Math.random() * 100;
+                let size = Math.random() * 3 + 1; // Kích thước từ 1px đến 4px
+                let duration = Math.random() * 3 + 2; // Thời gian animation từ 2s đến 5s
 
-        let heartSize = config.heart.initialSize;
-        let isExploding = false;
+                star.style.left = `${x}vw`;
+                star.style.top = `${y}vh`;
+                star.style.width = `${size}px`;
+                star.style.height = `${size}px`;
+                star.style.animationDuration = `${duration}s`;
+                star.style.animationDelay = `${Math.random() * 3}s`;
 
-        // --- 2. INTERACTIVE BACKGROUND ---
-        const canvas = document.getElementById('particle-canvas');
-        const ctx = canvas.getContext('2d');
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-        let particlesArray = [];
-        const mouse = { x: null, y: null };
-
-        class Particle {
-            constructor() {
-                this.x = Math.random() * canvas.width;
-                this.y = Math.random() * canvas.height;
-                this.size = Math.random() * 1.5 + 0.5;
-                this.speedX = Math.random() * 1 - 0.5;
-                this.speedY = Math.random() * 1 - 0.5;
-                this.color = 'rgba(255, 220, 230, 0.5)';
-            }
-            update() {
-                if (this.x > canvas.width || this.x < 0) this.speedX *= -1;
-                if (this.y > canvas.height || this.y < 0) this.speedY *= -1;
-                this.x += this.speedX;
-                this.y += this.speedY;
-
-                if (mouse.x != null) {
-                    let dx = mouse.x - this.x;
-                    let dy = mouse.y - this.y;
-                    let distance = Math.sqrt(dx * dx + dy * dy);
-                    if (distance < config.backgroundParticles.mouseRadius) {
-                        this.x -= dx / 15;
-                        this.y -= dy / 15;
-                    }
-                }
-            }
-            draw() {
-                ctx.fillStyle = this.color;
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                ctx.fill();
-            }
-        }
-
-        function initParticles() {
-            for (let i = 0; i < config.backgroundParticles.count; i++) {
-                particlesArray.push(new Particle());
-            }
-        }
-
-        function animateParticles() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            for (let i = 0; i < particlesArray.length; i++) {
-                particlesArray[i].update();
-                particlesArray[i].draw();
-            }
-            requestAnimationFrame(animateParticles);
-        }
-
-        window.addEventListener('resize', () => {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-        });
-
-        window.addEventListener('mousemove', (e) => {
-            mouse.x = e.x;
-            mouse.y = e.y;
-        });
-
-        window.addEventListener('mouseout', () => {
-            mouse.x = null;
-            mouse.y = null;
-        });
-
-        initParticles();
-        animateParticles();
-
-        // --- 3. LETTER INTERACTION ---
-        letterContainer.addEventListener('mousemove', (e) => {
-            if (letterContainer.classList.contains('flipped')) return;
-            const rect = letterContainer.getBoundingClientRect();
-            const x = e.clientX - rect.left - rect.width / 2;
-            const y = e.clientY - rect.top - rect.height / 2;
-            const rotateX = -y / rect.height * config.letterRotationFactor;
-            const rotateY = x / rect.width * config.letterRotationFactor;
-            letter.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
-        });
-
-        letterContainer.addEventListener('mouseleave', () => {
-            letter.style.transform = '';
-        });
-
-        letterContainer.addEventListener('click', () => {
-            if (letterContainer.classList.contains('flipped')) return;
-            letterContainer.classList.add('flipped');
-            setTimeout(() => {
-                letterContainer.classList.add('hidden');
-                heartContainer.classList.add('visible');
-            }, 1000);
-        });
-
-        // --- 4. HEART INTERACTION ---
-        heartContainer.addEventListener('click', () => {
-            if (isExploding) return;
-
-            popSound.currentTime = 0;
-            popSound.volume = 0.5;
-            popSound.play();
-
-            heartSize += config.heart.growFactor;
-            heartSvg.style.width = heartSize + 'px';
-            heartSvg.style.height = heartSize + 'px';
-
-            const progress = (heartSize - config.heart.initialSize) / (config.heart.maxSize - config.heart.initialSize);
-            crack1.style.opacity = progress * 1.5;
-            if (progress > 0.5) {
-                crack2.style.opacity = (progress - 0.5) * 2;
+                starsContainer.appendChild(star);
             }
 
-            if (heartSize > config.heart.maxSize) {
-                explodeHeart();
-            }
-        });
+            // --- Hiệu ứng Trái Tim 3D ---
+            const heartsContainer = document.getElementById('hearts-container');
+            const spawnInterval = 500;
 
-        // --- 5. THE GRAND EXPLOSION ---
-        function explodeHeart() {
-            if (isExploding) return;
-            isExploding = true;
-            explosionSound.play();
+            function createHeart() {
+                let heart = document.createElement('div');
+                heart.className = 'heart';
+                let x = Math.random() * 100; // Vị trí ngang ngẫu nhiên
+                let size = Math.random() * 20 + 10; // Kích thước từ 10px đến 30px
+                let duration = Math.random() * 4 + 4; // Thời gian animation từ 4s đến 8s
+                let delay = Math.random() * 2; // Độ trễ animation ngẫu nhiên
 
-            heartContainer.style.transition = 'transform 0.3s, opacity 0.3s';
-            heartContainer.style.transform = 'translate(-50%, -50%) scale(2)';
-            heartContainer.style.opacity = '0';
+                heart.style.left = `${x}vw`;
+                heart.style.width = `${size}px`;
+                heart.style.height = `${size}px`;
+                heart.style.animationDuration = `${duration}s`;
+                heart.style.animationDelay = `${delay}s`;
+                heart.style.animationTimingFunction = `cubic-bezier(${Math.random()}, ${Math.random()}, ${Math.random()}, ${Math.random()})`;
 
-            const explosionCenter = {
-                x: window.innerWidth / 2,
-                y: window.innerHeight / 2
-            };
+                heartsContainer.appendChild(heart);
 
-            if (config.explosion.flash) createFlash();
-            if (config.explosion.shockwave) createShockwave(explosionCenter);
-            createMultiLayerParticles(explosionCenter);
-
-            setTimeout(() => {
-                heartContainer.style.display = 'none';
-                invitation.classList.add('visible');
-            }, 800);
-        }
-
-        function createFlash() {
-            const flash = document.createElement('div');
-            flash.className = 'explosion-effect';
-            flash.style.left = '0';
-            flash.style.top = '0';
-            flash.style.width = '100vw';
-            flash.style.height = '100vh';
-            flash.style.background = 'radial-gradient(circle at center, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0) 60%)';
-            document.body.appendChild(flash);
-            flash.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 500, easing: 'ease-out' })
-                .onfinish = () => flash.remove();
-        }
-
-        function createShockwave(center) {
-            const shockwave = document.createElement('div');
-            shockwave.className = 'explosion-effect';
-            shockwave.style.left = center.x + 'px';
-            shockwave.style.top = center.y + 'px';
-            shockwave.style.width = '100px';
-            shockwave.style.height = '100px';
-            shockwave.style.borderRadius = '50%';
-            shockwave.style.border = '2px solid rgba(255, 255, 255, 0.7)';
-            shockwave.style.transform = 'translate(-50%, -50%)';
-            shockwave.style.boxShadow = '0 0 30px rgba(255, 71, 87, 0.5)';
-            document.body.appendChild(shockwave);
-            shockwave.animate([
-                { transform: 'translate(-50%, -50%) scale(1)', opacity: 1 },
-                { transform: 'translate(-50%, -50%) scale(15)', opacity: 0 }
-            ], { duration: 800, easing: 'ease-out' })
-                .onfinish = () => shockwave.remove();
-        }
-
-        function createMultiLayerParticles(center) {
-            const colors = ['#ff4757', '#ff6b81', '#ffc3a0', '#fff', '#ffd1dc', '#ff9e80'];
-            const types = [
-                { name: 'core', count: config.explosion.coreParticles, size: 15 },
-                { name: 'confetti', count: config.explosion.confetti, size: 10 },
-                { name: 'sparkle', count: config.explosion.sparkles, size: 5 },
-                { name: 'ember', count: config.explosion.glowEmbers, size: 3 },
-                { name: 'dust', count: config.explosion.dust, size: 2 }
-            ];
-
-            types.forEach(type => {
-                for (let i = 0; i < type.count; i++) {
-                    const piece = document.createElement('div');
-                    piece.className = 'explosion-effect';
-                    piece.style.left = center.x + 'px';
-                    piece.style.top = center.y + 'px';
-
-                    // Tạo mảnh trái tim nhỏ cho core và confetti
-                    if (type.name === 'core' || type.name === 'confetti') {
-                        const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-                        svg.setAttribute("viewBox", "0 0 24 24");
-                        svg.setAttribute("width", type.size);
-                        svg.setAttribute("height", type.size);
-                        svg.classList.add('heart-micro');
-
-                        const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
-                        path.setAttribute("d", "M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.41 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.41 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z");
-                        path.setAttribute("fill", colors[Math.floor(Math.random() * colors.length)]);
-                        svg.appendChild(path);
-
-                        piece.appendChild(svg);
-                    } else {
-                        // Các loại mảnh khác
-                        piece.style.width = `${type.size}px`;
-                        piece.style.height = `${type.size}px`;
-                        piece.style.borderRadius = (type.name === 'sparkle' || type.name === 'ember') ? '50%' : '2px';
-                        piece.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-
-                        if (type.name === 'sparkle') {
-                            piece.style.boxShadow = `0 0 8px ${piece.style.backgroundColor}`;
-                        }
-                        if (type.name === 'ember') {
-                            piece.style.filter = 'blur(1px)';
-                        }
-                    }
-
-                    document.body.appendChild(piece);
-                    animateParticle(piece, type.name, type.size);
-                }
-            });
-        }
-
-        function animateParticle(piece, type, size) {
-            const angle = Math.random() * Math.PI * 2;
-            let velocity, duration, gravity, initialTransform = '';
-
-            switch (type) {
-                case 'core':
-                    velocity = Math.random() * 250 + 200;
-                    duration = Math.random() * 800 + 500;
-                    gravity = 0.2;
-                    break;
-                case 'confetti':
-                    velocity = Math.random() * 150 + 100;
-                    duration = Math.random() * 1500 + 1000;
-                    gravity = 0.15;
-                    initialTransform = `rotate(${Math.random() * 360}deg)`;
-                    break;
-                case 'sparkle':
-                    velocity = Math.random() * 300 + 250;
-                    duration = Math.random() * 400 + 200;
-                    gravity = 0;
-                    break;
-                case 'ember':
-                    velocity = Math.random() * 50 + 20;
-                    duration = Math.random() * 2000 + 1500;
-                    gravity = -0.1;
-                    break;
-                case 'dust':
-                    velocity = Math.random() * 100 + 50;
-                    duration = Math.random() * 3000 + 2000;
-                    gravity = 0.05;
-                    break;
-            }
-
-            const keyframes = [];
-            const steps = 60;
-            for (let i = 0; i <= steps; i++) {
-                const t = i / steps;
-                const linearX = Math.cos(angle) * velocity * t;
-                const linearY = Math.sin(angle) * velocity * t;
-                const gravityY = 0.5 * gravity * 1000 * (t * duration / 1000) ** 2;
-                const translateX = linearX;
-                const translateY = linearY + gravityY;
-                const translateZ = (type === 'core' || type === 'confetti') ? (1 - t * t) * (Math.random() * 400 - 200) : 0;
-                const rotateX = (type === 'confetti') ? Math.random() * 360 * t * 5 : 0;
-                const rotateY = (type === 'confetti') ? Math.random() * 360 * t * 5 : 0;
-                const rotateZ = (type === 'sparkle') ? Math.random() * 360 * t * 3 : 0;
-
-                keyframes.push({
-                    transform: `translate3d(${translateX}px, ${translateY}px, ${translateZ}px) 
-                               rotateX(${rotateX}deg) 
-                               rotateY(${rotateY}deg) 
-                               rotateZ(${rotateZ}deg) 
-                               ${initialTransform}`,
-                    opacity: 1 - t * (type === 'dust' ? 0.7 : 1)
+                heart.addEventListener('animationend', function () {
+                    heart.remove();
                 });
             }
-            piece.animate(keyframes, { duration: duration, easing: 'cubic-bezier(0.1, 0.9, 0.2, 1)', })
-                .onfinish = () => piece.remove();
-        }
+
+            setInterval(createHeart, spawnInterval);
+
+
+            // --- Logic lật sách ---
+            const book = document.getElementById('book');
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            const pages = book.querySelectorAll('.page'); // Lấy tất cả các tấm page
+            const coverPage = book.querySelector('.page.cover'); // Lấy riêng bìa sách
+
+            let currentPageIndex = -1; // -1: bìa đóng, 0: bìa mở, 1: trang 1 đã lật, ...
+            const totalPages = pages.length; // Tổng số tấm page (bao gồm bìa)
+
+            // Thiết lập z-index ban đầu cho tất cả các tấm page
+            pages.forEach((page, index) => {
+                // Bìa luôn ở trên cùng khi đóng
+                page.style.zIndex = totalPages - index;
+            });
+
+            function updateButtons() {
+                prevBtn.disabled = currentPageIndex === -1; // Vô hiệu hóa khi bìa đóng
+                nextBtn.disabled = currentPageIndex === (totalPages - 1); // Vô hiệu hóa khi đã lật đến trang cuối cùng
+            }
+
+            function goNextPage() {
+                if (currentPageIndex === -1) { // Lần đầu tiên nhấp next, mở bìa
+                    coverPage.classList.add('flipped');
+                    // Tăng z-index của bìa để nó lật qua các trang khác
+                    coverPage.style.zIndex = totalPages + 1;
+                    currentPageIndex = 0; // Đã mở bìa
+                    // Chờ animation lật bìa xong rồi mới cho phép lật trang tiếp theo
+                    setTimeout(() => {
+                        updateButtons();
+                        // Reset z-index bìa về vị trí tương đối của nó để các trang sau có thể lật lên trên
+                        coverPage.style.zIndex = 0;
+                    }, 1200); // 1.2s là thời gian transition của bìa
+                } else if (currentPageIndex < (totalPages - 1)) { // Lật các trang nội dung
+                    currentPageIndex++;
+                    pages[currentPageIndex].classList.add('flipped');
+                    // Tăng z-index của trang đang lật
+                    pages[currentPageIndex].style.zIndex = totalPages + 1;
+                    updateButtons();
+                    // Đặt lại z-index sau khi animation hoàn tất để duy trì thứ tự
+                    setTimeout(() => {
+                        pages[currentPageIndex].style.zIndex = currentPageIndex;
+                    }, 1200);
+                }
+            }
+
+            function goPrevPage() {
+                if (currentPageIndex === 0) { // Đang ở trang 1 (bìa đã mở), đóng bìa lại
+                    coverPage.classList.remove('flipped');
+                    // Đặt lại z-index của bìa để nó che lại các trang
+                    coverPage.style.zIndex = totalPages + 1;
+                    currentPageIndex = -1; // Trạng thái bìa đóng
+                    // Chờ animation đóng bìa xong rồi mới giảm z-index
+                    setTimeout(() => {
+                        updateButtons();
+                        coverPage.style.zIndex = pages.length - 0; // Đặt lại z-index ban đầu
+                    }, 1200);
+                } else if (currentPageIndex > 0) { // Lật các trang nội dung về trước
+                    pages[currentPageIndex].classList.remove('flipped');
+                    // Đặt lại z-index của trang vừa lật về vị trí ban đầu
+                    pages[currentPageIndex].style.zIndex = totalPages - currentPageIndex;
+                    currentPageIndex--;
+                    updateButtons();
+                }
+            }
+
+            nextBtn.addEventListener('click', goNextPage);
+            prevBtn.addEventListener('click', goPrevPage);
+
+            // Bắt đầu với các nút được cập nhật
+            updateButtons();
+        });
     </script>
+
 </body>
 
 </html>
